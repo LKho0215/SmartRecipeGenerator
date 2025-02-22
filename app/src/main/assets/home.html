@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Recipe Generator</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+<header>
+    <div class="user-icon" onclick="viewProfile()">👤</div>
+    <h1>Smart Recipe Generator</h1>
+</header>
+
+<main>
+    <div class="camera-icon" onclick="snapPhoto()">📷</div>
+    <button onclick="viewPantry()">View Pantry</button>
+    <section class="recipes">
+        <h2>Recipes</h2>
+        <!-- Recipe history will be dynamically populated here -->
+    </section>
+    <button onclick="createRecipe()">Create Recipe</button>
+</main>
+
+<script src="scripts.js"></script>
+</body>
+</html>

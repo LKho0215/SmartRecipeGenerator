@@ -22,3 +22,7 @@ function signUp() {
 function snapPhoto() {
     Android.snapPhoto();
 }
+
+function viewProfile(){
+    window.location.href = "profile.html";
+}

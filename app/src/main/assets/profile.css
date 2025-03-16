@@ -15,6 +15,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 300px;
     text-align: center;
+    position: relative;
 }
 
 .logo img {
@@ -38,12 +39,15 @@ h1 {
     margin-bottom: 5px;
 }
 
-.profile-info p {
+.profile-info .info-item p {
     margin: 0;
     padding: 8px;
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 4px;
+    word-break: break-all;
+    min-height: 20px;
+    line-height: 1.4;
 }
 
 .profile-actions {
@@ -85,4 +89,68 @@ h1 {
 
 #delete-btn:hover {
     background-color: #c82333;
+}
+
+/* 彈出式確認窗口樣式 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    display: none;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 300px;
+}
+
+.modal-title {
+    color: #dc3545;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.modal-message {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.modal-cancel {
+    background-color: #6c757d;
+    color: white;
+    margin-right: 10px;
+}
+
+.modal-confirm {
+    background-color: #dc3545;
+    color: white;
 }

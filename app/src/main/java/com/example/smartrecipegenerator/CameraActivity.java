@@ -25,6 +25,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import androidx.camera.core.ExperimentalGetImage;
 import android.media.MediaActionSound;
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 
 @ExperimentalGetImage
 public class CameraActivity extends AppCompatActivity {
@@ -92,11 +94,43 @@ public class CameraActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         if (result != null) {
                             overlay.setClassificationResult(result);
-                            Toast.makeText(CameraActivity.this, 
-                                "識別結果: " + result, Toast.LENGTH_LONG).show();
+                            
+                            // 處理結果字符串，去掉置信度部分
+                            String itemName = result;
+                            if (result.contains("(")) {
+                                itemName = result.substring(0, result.indexOf("(")).trim();
+                            }
+                            
+                            final String finalItemName = itemName;
+                            
+                            // 顯示確認添加到 Pantry 的對話框
+                            new AlertDialog.Builder(CameraActivity.this)
+                                .setTitle("Add to Pantry")
+                                .setMessage("Do you want to add " + finalItemName + " to your pantry?")
+                                .setPositiveButton("Yes", (dialog, which) -> {
+                                    // 獲取當前用戶ID
+                                    SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                                    String email = prefs.getString("email", "");
+                                    DatabaseHelper dbHelper = new DatabaseHelper(CameraActivity.this);
+                                    int userId = dbHelper.getUserId(email);
+                                    
+                                    if (userId != -1) {
+                                        boolean added = dbHelper.addItemToPantry(userId, finalItemName);
+                                        if (added) {
+                                            Toast.makeText(CameraActivity.this, 
+                                                finalItemName + " added to pantry", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(CameraActivity.this, 
+                                                "Failed to add to pantry", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
+                            
                         } else {
                             Toast.makeText(CameraActivity.this, 
-                                "無法識別物體", Toast.LENGTH_SHORT).show();
+                                "Could not identify object", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -106,7 +140,7 @@ public class CameraActivity extends AppCompatActivity {
                     Log.e(TAG, "Photo capture failed: " + exc.getMessage(), exc);
                     runOnUiThread(() -> {
                         Toast.makeText(CameraActivity.this, 
-                            "拍照失敗", Toast.LENGTH_SHORT).show();
+                            "Photo capture failed", Toast.LENGTH_SHORT).show();
                     });
                 }
             }

@@ -15,19 +15,32 @@
     <div class="profile-info">
         <div class="info-item">
             <label>Name</label>
-            <p id="user-name"></p>
+            <p id="username">Loading...</p>
         </div>
         <div class="info-item">
             <label>Email</label>
-            <p id="user-email"></p>
+            <p id="useremail">Loading...</p>
         </div>
     </div>
     <div class="profile-actions">
-        <button id="edit-btn">Edit</button>
-        <button id="logout-btn">Logout</button>
-        <button id="delete-btn">Delete Account</button>
+        <button id="edit-btn" onclick="editProfile()">Edit</button>
+        <button id="logout-btn" onclick="logout()">Logout</button>
+        <button id="delete-btn" onclick="showDeleteConfirm()">Delete Account</button>
     </div>
 </div>
-<script src="script.js"></script>
+
+<!-- 彈出式確認窗口 -->
+<div id="delete-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-title">Delete Account</div>
+        <div class="modal-message">Are you sure you want to delete your account? This action cannot be undone.</div>
+        <div class="modal-buttons">
+            <button class="modal-cancel" onclick="cancelDelete()">Cancel</button>
+            <button class="modal-confirm" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<script src="scripts.js"></script>
 </body>
 </html>

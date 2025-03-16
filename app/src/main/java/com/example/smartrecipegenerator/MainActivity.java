@@ -3,6 +3,7 @@ package com.example.smartrecipegenerator;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebSettings;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,13 +22,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webview);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
-        webView.addJavascriptInterface(new WebAppInterface(this), "Android");
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        
+        webView.addJavascriptInterface(new WebAppInterface(this, webView), "Android");
+        
         dbHelper = new DatabaseHelper(this);
         dbHelper.getWritableDatabase();
 
-        webView.loadUrl("file:///android_asset/register.html");
+        webView.loadUrl("file:///android_asset/login.html");
     }
     public WebView getWebView() {
         return webView;

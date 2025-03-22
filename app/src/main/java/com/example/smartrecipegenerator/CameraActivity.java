@@ -27,6 +27,7 @@ import androidx.camera.core.ExperimentalGetImage;
 import android.media.MediaActionSound;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.content.Context;
 
 @ExperimentalGetImage
 public class CameraActivity extends AppCompatActivity {
@@ -108,22 +109,7 @@ public class CameraActivity extends AppCompatActivity {
                                 .setTitle("Add to Pantry")
                                 .setMessage("Do you want to add " + finalItemName + " to your pantry?")
                                 .setPositiveButton("Yes", (dialog, which) -> {
-                                    // 獲取當前用戶ID
-                                    SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                                    String email = prefs.getString("email", "");
-                                    DatabaseHelper dbHelper = new DatabaseHelper(CameraActivity.this);
-                                    int userId = dbHelper.getUserId(email);
-                                    
-                                    if (userId != -1) {
-                                        boolean added = dbHelper.addItemToPantry(userId, finalItemName);
-                                        if (added) {
-                                            Toast.makeText(CameraActivity.this, 
-                                                finalItemName + " added to pantry", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(CameraActivity.this, 
-                                                "Failed to add to pantry", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
+                                    processRecognitionResult(finalItemName);
                                 })
                                 .setNegativeButton("No", null)
                                 .show();
@@ -145,6 +131,72 @@ public class CameraActivity extends AppCompatActivity {
                 }
             }
         );
+    }
+
+    private void processRecognitionResult(String recognizedItem) {
+        if (recognizedItem != null && !recognizedItem.isEmpty()) {
+            // 獲取當前用戶 ID
+            SharedPreferences prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String email = prefs.getString("email", "");
+            
+            if (!email.isEmpty()) {
+                SupabaseHelper supabaseHelper = new SupabaseHelper(this);
+                
+                // 首先獲取用戶 ID
+                supabaseHelper.getUserId(email, new SupabaseHelper.SupabaseCallback<Integer>() {
+                    @Override
+                    public void onSuccess(Integer userId) {
+                        if (userId != -1) {
+                            // 添加識別的物品到 Pantry
+                            supabaseHelper.addItemToPantry(userId, recognizedItem, new SupabaseHelper.SupabaseCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean result) {
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(CameraActivity.this, 
+                                            "已添加 " + recognizedItem + " 到您的 Pantry", 
+                                            Toast.LENGTH_SHORT).show();
+                                        
+                                        // 返回主頁或 Pantry 頁面
+                                        finish();
+                                    });
+                                }
+                                
+                                @Override
+                                public void onError(String errorMessage) {
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(CameraActivity.this, 
+                                            "添加物品失敗: " + errorMessage, 
+                                            Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    });
+                                }
+                            });
+                        } else {
+                            runOnUiThread(() -> {
+                                Toast.makeText(CameraActivity.this, "用戶不存在", Toast.LENGTH_SHORT).show();
+                                finish();
+                            });
+                        }
+                    }
+                    
+                    @Override
+                    public void onError(String errorMessage) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(CameraActivity.this, 
+                                "獲取用戶 ID 失敗: " + errorMessage, 
+                                Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
+                    }
+                });
+            } else {
+                Toast.makeText(this, "用戶未登錄", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else {
+            Toast.makeText(this, "未能識別物品", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     private void startCamera() {
@@ -217,6 +269,18 @@ public class CameraActivity extends AppCompatActivity {
         }
         if (classifier != null) {
             classifier.close();
+        }
+    }
+
+    // 在識別完成後調用
+    private void onRecognitionComplete(List<String> recognizedItems) {
+        if (recognizedItems != null && !recognizedItems.isEmpty()) {
+            // 取第一個識別結果
+            String recognizedItem = recognizedItems.get(0);
+            processRecognitionResult(recognizedItem);
+        } else {
+            Toast.makeText(this, "未能識別物品", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 } 

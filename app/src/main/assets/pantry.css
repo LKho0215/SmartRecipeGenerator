@@ -1,0 +1,115 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px 0;
+}
+
+.pantry-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.logo img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.add-item-section {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.add-item-section input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+
+.add-item-section button {
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-item-section button:hover {
+    background-color: #218838;
+}
+
+.pantry-list {
+    text-align: left;
+    margin-bottom: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.pantry-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.pantry-item .item-name {
+    font-weight: bold;
+}
+
+.pantry-item .delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.pantry-item .delete-btn:hover {
+    background-color: #c82333;
+}
+
+.empty-message {
+    text-align: center;
+    color: #6c757d;
+    padding: 20px;
+}
+
+.back-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.back-btn:hover {
+    background-color: #0069d9;
+} 

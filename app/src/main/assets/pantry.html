@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pantry</title>
+    <link rel="stylesheet" href="pantry.css">
+</head>
+<body>
+    <div class="pantry-container">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+        </div>
+        <h1>My Pantry</h1>
+        
+        <div class="add-item-section">
+            <input type="text" id="new-item" placeholder="Add new item...">
+            <button id="add-btn" onclick="addItem()">Add</button>
+        </div>
+        
+        <div class="pantry-list" id="pantry-list">
+            <!-- 物品將通過 JavaScript 動態添加 -->
+            <div class="empty-message" id="empty-message">Your pantry is empty</div>
+        </div>
+        
+        <button class="back-btn" onclick="goBack()">Back to Home</button>
+    </div>
+    
+    <script src="pantry.js"></script>
+</body>
+</html> 

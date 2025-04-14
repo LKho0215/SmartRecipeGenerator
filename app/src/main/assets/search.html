@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Recipes</title>
+    <link rel="stylesheet" href="search.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 頂部導航欄 -->
+        <header class="app-header">
+            <div class="back-icon" onclick="goToHome()">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="logo">
+                <img src="logo.png" alt="Logo" class="logo-img">
+                <h1>Search Recipes</h1>
+            </div>
+            <div class="placeholder-icon"></div>
+        </header>
+
+        <!-- 搜索區域 -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="search-input" placeholder="Search your recipes..." oninput="searchRecipes()">
+                <i class="fas fa-times clear-icon" id="clear-search" onclick="clearSearch()"></i>
+            </div>
+        </div>
+
+        <!-- 主要內容區域 -->
+        <main class="main-content">
+            <!-- 搜索結果計數 -->
+            <div class="search-results-count" id="results-count">
+                All saved recipes
+            </div>
+
+            <!-- 無結果提示 -->
+            <div class="no-results" id="no-results" style="display: none;">
+                <i class="fas fa-search"></i>
+                <p>No recipes found</p>
+                <p class="no-results-sub">Try different keywords or check your saved recipes</p>
+            </div>
+
+            <!-- 食譜列表 -->
+            <div class="recipes-container" id="recipes-container">
+                <!-- 加載動畫 -->
+                <div class="loading-container" id="loading-container">
+                    <div class="spinner"></div>
+                    <p>Loading your recipes...</p>
+                </div>
+
+                <!-- 食譜卡片將通過 JavaScript 動態添加 -->
+            </div>
+        </main>
+
+    <script src="search.js"></script>
+</body>
+</html>

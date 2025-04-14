@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="edit_profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 頂部導航欄 -->
+        <header class="app-header">
+            <div class="back-icon" onclick="location.href='profile.html'">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="logo">
+                <h1>Edit Profile</h1>
+            </div>
+            <div class="placeholder-icon"></div>
+        </header>
+
+        <!-- 主要內容區域 -->
+        <main class="main-content">
+            <div class="edit-profile-container">
+                <div class="profile-avatar-edit">
+                    <div class="avatar-circle">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="decoration-circle circle-1"></div>
+                    <div class="decoration-circle circle-2"></div>
+                </div>
+
+                <div class="edit-options">
+                    <div class="edit-option" onclick="showEditForm('name')">
+                        <div class="option-icon">
+                            <i class="fas fa-user-edit"></i>
+                        </div>
+                        <div class="option-text">
+                            <h3>Edit Name</h3>
+                            <p>Change your display name</p>
+                        </div>
+                        <div class="option-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+
+                    <div class="edit-option" onclick="showEditForm('email')">
+                        <div class="option-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="option-text">
+                            <h3>Edit Email</h3>
+                            <p>Update your email address</p>
+                        </div>
+                        <div class="option-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+
+                    <div class="edit-option" onclick="showEditForm('password')">
+                        <div class="option-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <div class="option-text">
+                            <h3>Change Password</h3>
+                            <p>Update your account password</p>
+                        </div>
+                        <div class="option-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 編輯名稱表單 -->
+                <div id="name-form" class="edit-form">
+                    <div class="form-header">
+                        <h3><i class="fas fa-user-edit"></i> Edit Name</h3>
+                        <button class="close-btn" onclick="cancelEdit()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-name">New Name</label>
+                        <div class="input-container">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="new-name" placeholder="Enter new name">
+                        </div>
+                        <div id="name-error" class="error-message"></div>
+                    </div>
+                    <div class="button-container">
+                        <button class="cancel-btn" onclick="cancelEdit()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button class="save-btn" onclick="updateName()">
+                            <i class="fas fa-check"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 編輯郵箱表單 -->
+                <div id="email-form" class="edit-form">
+                    <div class="form-header">
+                        <h3><i class="fas fa-envelope"></i> Edit Email</h3>
+                        <button class="close-btn" onclick="cancelEdit()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-email">New Email</label>
+                        <div class="input-container">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="new-email" placeholder="Enter new email">
+                        </div>
+                        <div id="email-error" class="error-message"></div>
+                    </div>
+                    <div class="button-container">
+                        <button class="cancel-btn" onclick="cancelEdit()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button class="save-btn" onclick="updateEmail()">
+                            <i class="fas fa-check"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 修改密碼表單 -->
+                <div id="password-form" class="edit-form">
+                    <div class="form-header">
+                        <h3><i class="fas fa-lock"></i> Change Password</h3>
+                        <button class="close-btn" onclick="cancelEdit()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <div class="input-container">
+                            <i class="fas fa-key input-icon"></i>
+                            <input type="password" id="current-password" placeholder="Enter current password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <div class="input-container">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="new-password" placeholder="Enter new password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <div class="input-container">
+                            <i class="fas fa-check-circle input-icon"></i>
+                            <input type="password" id="confirm-password" placeholder="Confirm new password">
+                        </div>
+                        <div id="password-error" class="error-message"></div>
+                    </div>
+                    <div class="button-container">
+                        <button class="cancel-btn" onclick="cancelEdit()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                        <button class="save-btn" onclick="updatePassword()">
+                            <i class="fas fa-check"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>

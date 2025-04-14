@@ -72,7 +72,7 @@ public class CameraActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate: ", e);
-            Toast.makeText(this, "相機初始化失敗: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Camera initialization failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
             finish();
         }
     }
@@ -95,15 +95,15 @@ public class CameraActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         if (result != null) {
                             overlay.setClassificationResult(result);
-                            
+
                             // 處理結果字符串，去掉置信度部分
                             String itemName = result;
                             if (result.contains("(")) {
                                 itemName = result.substring(0, result.indexOf("(")).trim();
                             }
-                            
+
                             final String finalItemName = itemName;
-                            
+
                             // 顯示確認添加到 Pantry 的對話框
                             new AlertDialog.Builder(CameraActivity.this)
                                 .setTitle("Add to Pantry")
@@ -113,9 +113,9 @@ public class CameraActivity extends AppCompatActivity {
                                 })
                                 .setNegativeButton("No", null)
                                 .show();
-                            
+
                         } else {
-                            Toast.makeText(CameraActivity.this, 
+                            Toast.makeText(CameraActivity.this,
                                 "Could not identify object", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -125,7 +125,7 @@ public class CameraActivity extends AppCompatActivity {
                 public void onError(@NonNull ImageCaptureException exc) {
                     Log.e(TAG, "Photo capture failed: " + exc.getMessage(), exc);
                     runOnUiThread(() -> {
-                        Toast.makeText(CameraActivity.this, 
+                        Toast.makeText(CameraActivity.this,
                             "Photo capture failed", Toast.LENGTH_SHORT).show();
                     });
                 }
@@ -138,10 +138,10 @@ public class CameraActivity extends AppCompatActivity {
             // 獲取當前用戶 ID
             SharedPreferences prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
             String email = prefs.getString("email", "");
-            
+
             if (!email.isEmpty()) {
                 SupabaseHelper supabaseHelper = new SupabaseHelper(this);
-                
+
                 // 首先獲取用戶 ID
                 supabaseHelper.getUserId(email, new SupabaseHelper.SupabaseCallback<Integer>() {
                     @Override
@@ -152,20 +152,20 @@ public class CameraActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Boolean result) {
                                     runOnUiThread(() -> {
-                                        Toast.makeText(CameraActivity.this, 
-                                            "已添加 " + recognizedItem + " 到您的 Pantry", 
+                                        Toast.makeText(CameraActivity.this,
+                                            "Added " + recognizedItem + " to your pantry",
                                             Toast.LENGTH_SHORT).show();
-                                        
+
                                         // 返回主頁或 Pantry 頁面
                                         finish();
                                     });
                                 }
-                                
+
                                 @Override
                                 public void onError(String errorMessage) {
                                     runOnUiThread(() -> {
-                                        Toast.makeText(CameraActivity.this, 
-                                            "添加物品失敗: " + errorMessage, 
+                                        Toast.makeText(CameraActivity.this,
+                                            "Adding item failed: " + errorMessage,
                                             Toast.LENGTH_SHORT).show();
                                         finish();
                                     });
@@ -178,29 +178,29 @@ public class CameraActivity extends AppCompatActivity {
                             });
                         }
                     }
-                    
+
                     @Override
                     public void onError(String errorMessage) {
                         runOnUiThread(() -> {
-                            Toast.makeText(CameraActivity.this, 
-                                "獲取用戶 ID 失敗: " + errorMessage, 
+                            Toast.makeText(CameraActivity.this,
+                                "Failed to obtain user ID: " + errorMessage,
                                 Toast.LENGTH_SHORT).show();
                             finish();
                         });
                     }
                 });
             } else {
-                Toast.makeText(this, "用戶未登錄", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
                 finish();
             }
         } else {
-            Toast.makeText(this, "未能識別物品", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to identify item", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 
     private void startCamera() {
-        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = 
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture =
             ProcessCameraProvider.getInstance(this);
 
         cameraProviderFuture.addListener(() -> {
@@ -209,7 +209,7 @@ public class CameraActivity extends AppCompatActivity {
                 bindPreview(cameraProvider);
             } catch (ExecutionException | InterruptedException e) {
                 Log.e(TAG, "Error starting camera: ", e);
-                Toast.makeText(this, "啟動相機失敗", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed to activate camera", Toast.LENGTH_SHORT).show();
             }
         }, ContextCompat.getMainExecutor(this));
     }
@@ -233,24 +233,24 @@ public class CameraActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             Log.e(TAG, "Use case binding failed", e);
-            Toast.makeText(this, "相機綁定失敗", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Camera binding failed", Toast.LENGTH_SHORT).show();
         }
     }
 
     private boolean allPermissionsGranted() {
-        return ContextCompat.checkSelfPermission(this, REQUIRED_PERMISSIONS[0]) == 
+        return ContextCompat.checkSelfPermission(this, REQUIRED_PERMISSIONS[0]) ==
             PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, 
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera();
             } else {
-                Toast.makeText(this, "需要相機權限", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera permission required", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -279,8 +279,8 @@ public class CameraActivity extends AppCompatActivity {
             String recognizedItem = recognizedItems.get(0);
             processRecognitionResult(recognizedItem);
         } else {
-            Toast.makeText(this, "未能識別物品", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to identify item", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
-} 
+}

@@ -5,69 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Result</title>
     <link rel="stylesheet" href="recipe_result.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="recipe-result-container">
-        <!-- <div class="logo">
-            <img src="logo.png" alt="Logo">
-        </div> -->
-        <h1>Your Recipe</h1>
-        
-        <div class="recipe-image-container" id="recipe-image-container" style="display:none;">
-            <img id="recipe-image" alt="Recipe Image" class="recipe-image">
-        </div>
-        
-        <div class="recipe-content" id="recipe-content">
-            <!-- 預設食譜內容 -->
-            <h1>High-Protein Tomato & Lentil Stew</h1>
-            
-            <h2>Ingredients:</h2>
-            <ul>
-                <li>1 tbsp olive oil</li>
-                <li>1 large onion, chopped</li>
-                <li>2 cloves garlic, minced</li>
-                <li>1 cup red lentils, rinsed</li>
-                <li>28 oz (794g) canned crushed tomatoes</li>
-                <li>4 cups vegetable broth</li>
-                <li>1 tsp dried oregano</li>
-                <li>1/2 tsp dried basil</li>
-                <li>1/4 tsp red pepper flakes (optional)</li>
-                <li>Salt and pepper to taste</li>
-                <li>1/2 cup chopped fresh parsley (for garnish)</li>
-                <li>1/2 cup crumbled feta cheese (optional, for garnish and extra protein)</li>
-            </ul>
-            
-            <h2>Instructions:</h2>
-            <ol>
-                <li>Heat olive oil in a large pot or Dutch oven over medium heat. Add onion and cook until softened, about 5 minutes.</li>
-                <li>Add garlic and cook for 1 minute more, until fragrant.</li>
-                <li>Stir in red lentils, crushed tomatoes, vegetable broth, oregano, basil, and red pepper flakes (if using). Bring to a boil.</li>
-                <li>Reduce heat to low, cover, and simmer for 25-30 minutes, or until lentils are tender.</li>
-                <li>Season with salt and pepper to taste.</li>
-                <li>Stir in fresh parsley before serving.</li>
-                <li>Garnish with feta cheese (optional).</li>
-            </ol>
-            
-            <h2>Cooking Time:</h2>
-            <p>35-40 minutes</p>
-            
-            <h2>Nutritional Information:</h2>
-            <p>This is a complex calculation and depends on the specific ingredients used. A nutritional calculator using the precise brands and weights of your ingredients will provide the most accurate information. However, a general estimate would be:</p>
-            <ul>
-                <li>Calories: 250-350</li>
-                <li>Protein: 20-25g</li>
-                <li>Fiber: 10-15g</li>
-            </ul>
-            <p><em>Note: Nutritional information is an estimate and may vary.</em></p>
-        </div>
-        
-        <div class="action-buttons">
-            <button onclick="saveRecipe()">Save Recipe</button>
-            <button onclick="shareRecipe()">Share</button>
-            <button onclick="goToHome()">Back to Home</button>
+    <div class="app-container">
+        <!-- 頂部導航欄 -->
+        <header class="app-header">
+            <div class="back-icon" onclick="goToHome()">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="logo">
+                <h1>Recipe Details</h1>
+            </div>
+            <div class="placeholder-icon"></div>
+        </header>
+
+        <!-- 主要內容區域 -->
+        <main class="main-content">
+            <div class="recipe-result-container">
+                <!-- 已保存食譜標記 -->
+                <!-- 會通過 JavaScript 動態添加 -->
+
+                <!-- 食譜圖片容器 -->
+                <div id="recipe-image-container" class="recipe-image-container">
+                    <img id="recipe-image" src="" alt="Recipe Image" class="recipe-image">
+                </div>
+
+                <!-- 食譜內容 -->
+                <div id="recipe-content" class="recipe-content">
+                    <!-- 食譜內容將通過 JavaScript 動態加載 -->
+                    <div class="loading-recipe">
+                        <div class="spinner"></div>
+                        <p>Loading your delicious recipe...</p>
+                    </div>
+                </div>
+
+                <!-- 操作按鈕 -->
+                <div class="recipe-actions">
+                    <button onclick="saveRecipe()" class="action-btn save-btn">
+                        <i class="fas fa-save"></i> Save Recipe
+                    </button>
+                    <button onclick="shareRecipe()" class="action-btn share-btn">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    <button id="delete-recipe-btn" onclick="confirmDeleteRecipe()" class="action-btn delete-btn" style="display: none;">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 刪除確認對話框 -->
+    <div id="delete-confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-title">
+                <i class="fas fa-exclamation-triangle"></i> Delete Recipe
+            </div>
+            <div class="modal-message">Are you sure you want to delete this recipe?</div>
+            <div class="modal-buttons">
+                <button class="modal-cancel" onclick="cancelDelete()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-confirm" onclick="deleteRecipe()">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </button>
+            </div>
         </div>
     </div>
-    
+
     <script src="recipe_result.js"></script>
 </body>
-</html> 
+</html>

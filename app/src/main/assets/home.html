@@ -5,23 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Recipe Generator</title>
     <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<header>
-    <div class="user-icon" onclick="viewProfile()">👤</div>
-    <h1>Smart Recipe Generator</h1>
-</header>
+    <div class="app-container">
+        <!-- 頂部導航欄 -->
+        <header class="app-header">
+            <div class="logo">
+                <img src="logo.png" alt="Logo" class="logo-img">
+                <h1>Smart Recipe Generator</h1>
+            </div>
+        </header>
 
-<main>
-    <div class="camera-icon" onclick="snapPhoto()">📷</div>
-    <button onclick="Android.viewPantry()">View Pantry</button>
-    <section class="recipes">
-        <h2>Recipes</h2>
-        <!-- Recipe history will be dynamically populated here -->
-    </section>
-    <button onclick="Android.createRecipe()">Create Recipe</button>
-</main>
+        <!-- 主要內容區域 -->
+        <main class="main-content">
+            <!-- 歡迎信息 -->
+            <section class="welcome-section">
+                <div class="welcome-text">
+                    <h2>Hello, <span id="user-name">Chef</span>!</h2>
+                    <p>What would you like to cook today?</p>
+                </div>
+                <div class="decoration-circle"></div>
+                <div class="decoration-circle circle-2"></div>
+            </section>
 
-<script src="scripts.js"></script>
+            <!-- 功能卡片區域 -->
+            <section class="features-section">
+                <div class="feature-card camera-card" onclick="snapPhoto()">
+                    <div class="card-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Identify Ingredients</h3>
+                        <p>Take a photo to identify food</p>
+                    </div>
+                    <div class="card-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+
+                <div class="feature-card pantry-card" onclick="location.href='pantry.html'">
+                    <div class="card-icon">
+                        <i class="fas fa-apple-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>My Pantry</h3>
+                        <p>View and manage your ingredients</p>
+                    </div>
+                    <div class="card-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+
+                <div class="feature-card create-recipe-card" onclick="Android.createRecipe()">
+                    <div class="card-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Create Recipe</h3>
+                        <p>Generate recipes with AI</p>
+                    </div>
+                    <div class="card-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 保存的食譜區域 -->
+            <section class="recipes">
+                <div class="section-header">
+                    <h2>Saved Recipes</h2>
+                </div>
+                <!-- Recipe history will be dynamically populated here -->
+                <div class="recipe-placeholder-container">
+                    <div class="recipe-placeholder">
+                        <div class="recipe-image-placeholder"></div>
+                        <div class="recipe-text-placeholder"></div>
+                    </div>
+                    <div class="recipe-placeholder">
+                        <div class="recipe-image-placeholder"></div>
+                        <div class="recipe-text-placeholder"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部導航欄 -->
+        <nav class="bottom-nav">
+            <div class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" onclick="location.href='search.html'">
+                <i class="fas fa-search"></i>
+                <span>Search</span>
+            </div>
+            <div class="nav-item camera-btn" onclick="snapPhoto()">
+                <div class="camera-icon-container">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+            <div class="nav-item" onclick="location.href='pantry.html'">
+                <i class="fas fa-apple-alt"></i>
+                <span>Pantry</span>
+            </div>
+            <div class="nav-item" onclick="location.href='profile.html'">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </div>
+        </nav>
+    </div>
+
+    <script src="scripts.js"></script>
 </body>
 </html>

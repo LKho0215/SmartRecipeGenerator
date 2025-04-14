@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Creator</title>
     <link rel="stylesheet" href="recipe_creator.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="recipe-container">
-        <div class="logo">
+        <!-- <div class="logo">
             <img src="logo.png" alt="Logo">
-        </div>
-        <h1>Create Recipe</h1>
-        
+        </div> -->
+        <h1>Create Your Recipe</h1>
+
         <!-- 步驟指示器 -->
         <div class="step-indicator">
             <div class="step active" id="step-1">1</div>
@@ -21,10 +22,10 @@
             <div class="step-line"></div>
             <div class="step" id="step-3">3</div>
         </div>
-        
+
         <!-- 步驟 1: 選擇食譜類型 -->
         <div class="step-content active" id="step-1-content">
-            <h2>Select Recipe Type</h2>
+            <h2><i class="fas fa-utensils"></i> Select Recipe Type</h2>
             <div class="recipe-types">
                 <div class="type-option" onclick="selectType('Gluten-Free')">
                     <span>Gluten-Free</span>
@@ -51,77 +52,77 @@
                     <span>Low-Calorie</span>
                 </div>
             </div>
-            
+
             <div class="custom-type">
                 <input type="text" id="custom-type" placeholder="Or enter custom type...">
             </div>
-            
+
             <div class="selected-types" id="selected-types">
                 <!-- 已選擇的類型會顯示在這裡 -->
             </div>
-            
+
             <div class="navigation-buttons">
-                <button onclick="goBack()">Back</button>
-                <button onclick="nextStep(1)">Next</button>
+                <button onclick="goBack()"><i class="fas fa-arrow-left"></i> Back</button>
+                <button onclick="nextStep(1)">Next <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
-        
+
         <!-- 步驟 2: 選擇食材 -->
         <div class="step-content" id="step-2-content">
-            <h2>Select Ingredients</h2>
+            <h2><i class="fas fa-carrot"></i> Select Ingredients</h2>
             <div class="pantry-items" id="pantry-items">
                 <!-- 從 Pantry 加載的食材會顯示在這裡 -->
                 <div class="loading">Loading your pantry items...</div>
             </div>
-            
+
             <div class="selected-ingredients" id="selected-ingredients">
-                <h3>Selected Ingredients</h3>
+                <h3><i class="fas fa-check-circle"></i> Selected Ingredients</h3>
                 <div class="ingredients-list" id="ingredients-list">
                     <!-- 已選擇的食材會顯示在這裡 -->
                     <div class="empty-selection">No ingredients selected yet</div>
                 </div>
             </div>
-            
+
             <div class="navigation-buttons">
-                <button onclick="prevStep(2)">Back</button>
-                <button onclick="nextStep(2)">Next</button>
+                <button onclick="prevStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+                <button onclick="nextStep(2)">Next <i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
-        
+
         <!-- 步驟 3: 生成食譜 -->
         <div class="step-content" id="step-3-content">
-            <h2>Generate Recipe</h2>
+            <h2><i class="fas fa-magic"></i> Generate Recipe</h2>
             <div class="recipe-summary">
-                <h3>Recipe Type</h3>
+                <h3><i class="fas fa-tags"></i> Recipe Type</h3>
                 <div id="summary-types"></div>
-                
-                <h3>Ingredients</h3>
+
+                <h3><i class="fas fa-list"></i> Ingredients</h3>
                 <div id="summary-ingredients"></div>
             </div>
-            
+
             <div class="generate-button">
-                <button id="generate-btn" onclick="generateRecipe()">Generate Recipe</button>
+                <button id="generate-btn" onclick="generateRecipe()"><i class="fas fa-wand-magic-sparkles"></i> Generate Recipe</button>
             </div>
-            
+
             <div class="loading-recipe" id="loading-recipe" style="display:none;">
                 <div class="spinner"></div>
-                <p>Creating your recipe...</p>
+                <p>Creating your delicious recipe...</p>
             </div>
-            
+
             <div class="recipe-result-container" id="recipe-result-container" style="display:none;">
-                <h3>Your Recipe</h3>
+                <h3><i class="fas fa-book"></i> Your Recipe</h3>
                 <div class="recipe-result-scroll">
                     <div id="recipe-result"></div>
                 </div>
-                <button class="save-recipe-btn" onclick="saveRecipe()">Save Recipe</button>
+                <button class="save-recipe-btn" onclick="saveRecipe()"><i class="fas fa-save"></i> Save Recipe</button>
             </div>
-            
+
             <div class="navigation-buttons">
-                <button onclick="prevStep(3)">Back</button>
+                <button onclick="prevStep(3)"><i class="fas fa-arrow-left"></i> Back</button>
             </div>
         </div>
     </div>
-    
+
     <script src="recipe_creator.js"></script>
 </body>
-</html> 
+</html>

@@ -1,184 +1,408 @@
+/* 基本樣式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f8f9fa;
+    color: #333;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 頂部導航欄 */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.back-icon, .placeholder-icon {
+    width: 36px;
+    height: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 5px 0;
 }
 
+.back-icon {
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.back-icon:hover {
+    background-color: #f0f0f0;
+}
+
+.back-icon i {
+    font-size: 20px;
+    color: #555;
+}
+
+.logo h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+/* 主要內容區域 */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* 食譜結果容器 */
 .recipe-result-container {
     background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 95%;
-    max-width: 800px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    position: relative;
+    animation: slideUp 0.5s ease-out;
 }
 
-/* .logo img {
-    width: 60px;
-    height: 60px;
-    margin-bottom: 10px;
-    display: block;
-    margin: 0 auto;
-} */
-
-h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 10px;
-    font-size: 1.5em;
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
-.recipe-content {
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 8px;
-    margin: 8px 0;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    /* white-space: pre-line; */
-    line-height: 2;
-    text-align: justify;
+/* 已保存食譜標記 */
+.saved-badge {
+    position: absolute;
+    top: 20px;
+    right: -30px;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    padding: 8px 30px;
+    transform: rotate(45deg);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    animation: badgeFadeIn 0.8s ease-out;
 }
 
-.recipe-content h2 {
-    color: #007bff;
-    border-bottom: 1px solid #007bff;
-    padding-bottom: 4px;
-    margin-top: 5;
-    margin-bottom: 6px;
-    font-size: 1.3em;
-    text-align: center;
+@keyframes badgeFadeIn {
+    from {
+        opacity: 0;
+        transform: rotate(45deg) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(45deg) translateY(0);
+    }
 }
 
-.recipe-content h3 {
-    color: #28a745;
-    margin-top: 10px;
-    margin-bottom: 4px;
-    font-size: 1.1em;
-}
-
-.recipe-content ul, .recipe-content ol {
-    padding-left: 30px;
-    margin-top: 4px;
-    margin-bottom: 4px;
-}
-
-.recipe-content li {
-    margin-bottom: 2px;
-}
-
-.recipe-content p {
-    padding-left: 30px;
-    margin-top: 4px;
-    margin-bottom: 4px;
-}
-
-.recipe-content p + p {
-    margin-top: 3px;
-}
-
-.recipe-content h3 + p, .recipe-content h2 + p {
-    margin-top: 3px;
-}
-
+/* 食譜圖片容器 */
 .recipe-image-container {
-    margin: 10px auto;
-    text-align: center;
-    display: block;
-    width: 200px;
+    width: 100%;
     height: 200px;
     overflow: hidden;
-    border-radius: 6px;
+    display: none;
 }
 
 .recipe-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease;
 }
 
-.loading {
+.recipe-image:hover {
+    transform: scale(1.05);
+}
+
+/* 食譜內容 */
+.recipe-content {
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.recipe-content h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #333;
     text-align: center;
-    padding: 10px;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.recipe-content h2 {
+    font-size: 20px;
+    margin: 20px 0 10px;
+    color: #444;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+
+.recipe-content ul, .recipe-content ol {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.recipe-content li {
+    margin-bottom: 8px;
+}
+
+.recipe-content p {
+    margin-bottom: 15px;
+}
+
+/* 加載動畫 */
+.loading-recipe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
     color: #666;
 }
 
-.action-buttons {
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(106, 17, 203, 0.1);
+    border-radius: 50%;
+    border-top-color: #6a11cb;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 操作按鈕 */
+.recipe-actions {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    padding: 0 20px 20px;
+    gap: 10px;
 }
 
-.action-buttons button {
+.action-btn {
     flex: 1;
-    margin: 0 3px;
-    padding: 8px;
+    padding: 12px 0;
     border: none;
-    border-radius: 4px;
+    border-radius: 25px;
     cursor: pointer;
+    font-weight: 600;
     font-size: 14px;
-    transition: background-color 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
 }
 
-.action-buttons button:first-child {
-    background-color: #28a745;
+.action-btn i {
+    font-size: 16px;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(106, 17, 203, 0.4);
+}
+
+.share-btn {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    box-shadow: 0 4px 10px rgba(17, 153, 142, 0.3);
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(17, 153, 142, 0.4);
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    color: white;
+    box-shadow: 0 4px 10px rgba(235, 51, 73, 0.3);
+}
+
+.delete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(235, 51, 73, 0.4);
+}
+
+/* 刪除確認對話框 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: zoomIn 0.3s ease-out;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #eb3349;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-title i {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.modal-message {
+    margin-bottom: 20px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.modal-cancel {
+    background-color: #f1f1f1;
+    color: #666;
+}
+
+.modal-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.modal-confirm {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
     color: white;
 }
 
-.action-buttons button:first-child:hover {
-    background-color: #218838;
+.modal-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(235, 51, 73, 0.3);
 }
 
-.action-buttons button:nth-child(2) {
-    background-color: #007bff;
-    color: white;
+/* 響應式設計 */
+@media (min-width: 768px) {
+    .main-content {
+        max-width: 768px;
+        margin: 0 auto;
+    }
+
+    .bottom-nav {
+        max-width: 768px;
+        margin: 0 auto;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 16px 16px 0 0;
+    }
 }
 
-.action-buttons button:nth-child(2):hover {
-    background-color: #0069d9;
-}
-
-.action-buttons button:last-child {
-    background-color: #6c757d;
-    color: white;
-}
-
-.action-buttons button:last-child:hover {
-    background-color: #5a6268;
-}
-
-.recipe-content::-webkit-scrollbar {
-    width: 6px;
-}
-
-.recipe-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-}
-
-.recipe-content::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
-}
-
-.recipe-content::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-@media (max-width: 600px) {
-    .action-buttons {
+@media (max-width: 480px) {
+    .recipe-actions {
         flex-direction: column;
     }
 
-    .action-buttons button {
-        margin: 3px 0;
+    .action-btn {
+        width: 100%;
     }
 }

@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class FruitVegetableClassifier {
     private static final String TAG = "FruitVegClassifier";
-    private static final String MODEL_PATH = "fruit_vegetable_model2.tflite";
+    private static final String MODEL_PATH = "fruit_vegetable_model.tflite";
     private static final String LABEL_PATH = "labels.txt";
     private static final int IMAGE_SIZE = 224;
     private static final float[] NORMALIZE_MEAN = new float[] {127.5f, 127.5f, 127.5f};
@@ -51,7 +51,7 @@ public class FruitVegetableClassifier {
 
         } catch (IOException e) {
             Log.e(TAG, "Error loading model or labels: ", e);
-            throw new RuntimeException("無法載入模型或標籤: " + e.getMessage());
+            throw new RuntimeException("Unable to load model or labels: " + e.getMessage());
         }
     }
 
@@ -66,7 +66,7 @@ public class FruitVegetableClassifier {
 
             tflite.run(tensorImage.getBuffer(), outputBuffer.getBuffer());
 
-            Map<String, Float> labeledProbability = 
+            Map<String, Float> labeledProbability =
                 new TensorLabel(labels, outputBuffer).getMapWithFloatValue();
 
             float maxProb = 0;
@@ -95,4 +95,4 @@ public class FruitVegetableClassifier {
             tflite = null;
         }
     }
-} 
+}

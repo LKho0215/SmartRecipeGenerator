@@ -14,7 +14,7 @@ public class ObjectDetectionOverlay extends View {
     private Paint bgPaint;
     private String classificationResult;
     private RectF centerBox;
-    
+
     // 調整框的大小比例（0.8 表示佔螢幕寬度的 80%）
     private static final float BOX_SIZE_RATIO = 0.8f;
 
@@ -36,7 +36,7 @@ public class ObjectDetectionOverlay extends View {
 
         bgPaint = new Paint();
         bgPaint.setColor(Color.argb(160, 0, 0, 0));  // 調整背景透明度
-        
+
         // 在初始化時就更新框的位置
         post(this::updateCenterBox);
     }
@@ -50,7 +50,7 @@ public class ObjectDetectionOverlay extends View {
         float centerX = getWidth() / 2f;
         float centerY = getHeight() / 2f;
         float boxSize = Math.min(getWidth(), getHeight()) * BOX_SIZE_RATIO;
-        
+
         centerBox = new RectF(
             centerX - boxSize/2,
             centerY - boxSize/2,
@@ -63,7 +63,7 @@ public class ObjectDetectionOverlay extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        
+
         if (centerBox != null) {
             // 始終繪製邊框
             canvas.drawRect(centerBox, boxPaint);
@@ -81,7 +81,7 @@ public class ObjectDetectionOverlay extends View {
                     bgPaint
                 );
 
-                canvas.drawText(classificationResult, 
+                canvas.drawText(classificationResult,
                     centerBox.left + 20,  // 增加文字左邊距
                     centerBox.top - textHeight/3,  // 調整文字垂直位置
                     textPaint
@@ -95,4 +95,4 @@ public class ObjectDetectionOverlay extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         updateCenterBox();
     }
-} 
+}

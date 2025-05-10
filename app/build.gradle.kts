@@ -88,4 +88,9 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:storage-kt:1.4.7")
     implementation("io.ktor:ktor-client-android:2.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+
+    // PDF Generation capabilities are provided by the Android platform
+    // through the android.graphics.pdf.PdfDocument class
+
+    implementation("com.itextpdf:itext7-core:7.2.5")
 }

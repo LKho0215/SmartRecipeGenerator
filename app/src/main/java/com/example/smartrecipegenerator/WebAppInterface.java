@@ -805,23 +805,30 @@ public class WebAppInterface {
     public void shareRecipe(String title, String content) {
         Log.d("RecipeDebug", "shareRecipe called with title: " + title);
 
-        // 創建分享意圖
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
+        // Share as PDF if we have an image, otherwise use text sharing
+        if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
+            // Use PdfHelper to generate and share PDF with recipe details
+            PdfHelper.generateAndShareRecipePdf(context, title, content, currentImageUrl);
+        } else {
+            // Fallback to original text sharing if no image is available
+            // Create share intent
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
 
-        // 設置分享內容
-        String shareText = title + "\n\n";
+            // Set share content
+            String shareText = title + "\n\n";
 
-        // 從HTML內容中提取純文本
-        String plainText = Html.fromHtml(content, Html.FROM_HTML_MODE_COMPACT).toString();
-        shareText += plainText;
+            // Extract plain text from HTML content
+            String plainText = Html.fromHtml(content, Html.FROM_HTML_MODE_COMPACT).toString();
+            shareText += plainText;
 
-        // 添加分享信息
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, title);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+            // Add share information
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
 
-        // 啟動分享對話框
-        ((Activity) context).startActivity(Intent.createChooser(shareIntent, "Share Recipe"));
+            // Start share dialog
+            ((Activity) context).startActivity(Intent.createChooser(shareIntent, "Share Recipe"));
+        }
     }
 
     @JavascriptInterface

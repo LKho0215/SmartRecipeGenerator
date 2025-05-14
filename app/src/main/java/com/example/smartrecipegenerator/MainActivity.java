@@ -51,7 +51,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
+        if (webView.getUrl() != null && !webView.getUrl().endsWith("home.html")) {
+            // If we're not on the home page, navigate to home
+            webView.loadUrl("file:///android_asset/home.html");
+        } else if (webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();

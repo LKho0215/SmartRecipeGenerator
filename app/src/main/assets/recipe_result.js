@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
             deleteButton.style.display = 'none';
         }
 
+        // 隱藏分享按鈕，因為這不是已保存的食譜
+        const shareButton = document.querySelector('.share-btn');
+        if (shareButton) {
+            shareButton.style.display = 'none';
+        }
+
         // 移除已保存標記（如果有）
         const savedBadge = document.querySelector('.saved-badge');
         if (savedBadge) {
@@ -37,6 +43,12 @@ document.addEventListener('DOMContentLoaded', function() {
         Android.getGeneratedRecipe();
     } else {
         console.log("This is a saved recipe with ID:", recipeId);
+
+        // 確保分享按鈕可見，因為這是已保存的食譜
+        const shareButton = document.querySelector('.share-btn');
+        if (shareButton) {
+            shareButton.style.display = 'flex';
+        }
 
         // 保存食譜ID到頁面數據中
         if (recipeId) {

@@ -51,8 +51,13 @@ public class PdfHelper {
      */
     public static void generateAndShareRecipePdf(Context context, String title, String htmlContent, String base64Image) {
         try {
-            // Create PDF file in cache directory
-            File pdfFile = new File(context.getCacheDir(), "recipe_" + System.currentTimeMillis() + ".pdf");
+            String safeTitle = title.replaceAll("[^a-zA-Z0-9._-]", "_").trim();
+            if (safeTitle.isEmpty()) {
+                safeTitle = "recipe";
+            }
+
+            // Create PDF file in cache directory with recipe title
+            File pdfFile = new File(context.getCacheDir(), safeTitle + "_recipe.pdf");
 
             // Convert HTML to plain text
             String plainText = Html.fromHtml(htmlContent, Html.FROM_HTML_MODE_COMPACT).toString();

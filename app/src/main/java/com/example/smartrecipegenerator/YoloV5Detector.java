@@ -32,7 +32,7 @@ import java.util.PriorityQueue;
 
 public class YoloV5Detector {
     private static final String TAG = "YoloV5Detector";
-    private static final String MODEL_FILE = "best-int8-640.tflite";
+    private static final String MODEL_FILE = "food-ingredients-int8-640.tflite";
     private static final String LABEL_FILE = "labels.txt";
 
     // Model configuration
@@ -147,28 +147,22 @@ public class YoloV5Detector {
         try {
             Log.d(TAG, "Original bitmap dimensions: " + bitmap.getWidth() + "x" + bitmap.getHeight());
 
-            // 创建一个方形裁剪的位图
             Bitmap squareBitmap = createSquareBitmap(bitmap);
             Log.d(TAG, "Square cropped bitmap size: " + squareBitmap.getWidth() + "x" + squareBitmap.getHeight());
 
-            // 增强图像
             Bitmap enhancedBitmap = enhanceImage(squareBitmap);
             Log.d(TAG, "Enhanced bitmap for better detection");
 
-            // 缩放到模型输入大小
             Bitmap resizedBitmap = Bitmap.createScaledBitmap(enhancedBitmap, INPUT_SIZE, INPUT_SIZE, true);
             Log.d(TAG, "Resized bitmap to model input size: " + resizedBitmap.getWidth() + "x" + resizedBitmap.getHeight());
 
-            // 转换位图为输入缓冲区格式
             convertBitmapToByteBuffer(resizedBitmap);
 
-            // 运行推理
             long startTime = System.currentTimeMillis();
             runInference();
             long endTime = System.currentTimeMillis();
             Log.d(TAG, "Model inference took " + (endTime - startTime) + "ms");
 
-            // 处理结果
             List<Detection> detections = processResults();
 
             // 应用NMS过滤
@@ -220,21 +214,14 @@ public class YoloV5Detector {
             return new ArrayList<>();
         }
     }
-
-    /**
-     * Create a square bitmap from the center of the original bitmap
-     * This ensures we're always working with a square input region
-     */
     private Bitmap createSquareBitmap(Bitmap originalBitmap) {
         int width = originalBitmap.getWidth();
         int height = originalBitmap.getHeight();
         int size = Math.min(width, height);
 
-        // Calculate crop area (center of the image)
         int x = (width - size) / 2;
         int y = (height - size) / 2;
 
-        // Create the square bitmap
         return Bitmap.createBitmap(originalBitmap, x, y, size, size);
     }
 
@@ -318,35 +305,25 @@ public class YoloV5Detector {
         return letterboxedBitmap;
     }
 
-    /**
-     * 对输入图像应用图像增强技术以提高检测质量
-     */
     private Bitmap enhanceImage(Bitmap input) {
-        // 创建输出位图
         Bitmap output = Bitmap.createBitmap(input.getWidth(), input.getHeight(), input.getConfig());
 
-        // 使用Canvas和Paint应用图像增强
         Canvas canvas = new Canvas(output);
         Paint paint = new Paint();
 
-        // 增强对比度和锐度的ColorMatrix
         ColorMatrix colorMatrix = new ColorMatrix();
 
-        // 提高对比度 (1.2)
         colorMatrix.set(new float[] {
-            1.2f, 0, 0, 0, -20, // 红色通道
-            0, 1.2f, 0, 0, -20, // 绿色通道
-            0, 0, 1.2f, 0, -20, // 蓝色通道
-            0, 0, 0, 1, 0       // alpha通道
+            1.2f, 0, 0, 0, -20,
+            0, 1.2f, 0, 0, -20,
+            0, 0, 1.2f, 0, -20,
+            0, 0, 0, 1, 0
         });
 
-        // 应用ColorMatrix
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
 
-        // 绘制增强后的图像
         canvas.drawBitmap(input, 0, 0, paint);
 
-        // 返回增强的位图
         return output;
     }
 
@@ -357,7 +334,6 @@ public class YoloV5Detector {
 
         Log.d(TAG, "Converting bitmap to input buffer");
 
-        // 计算图像统计数据
         long pixelSum = 0;
         long pixelSqSum = 0;
         int pixelCount = INPUT_SIZE * INPUT_SIZE;

@@ -170,3 +170,7 @@ function loadPantryItems() {
         Android.getPantryItems();
     }
 }
+
+function snapPhoto() {
+    Android.snapPhoto();
+}

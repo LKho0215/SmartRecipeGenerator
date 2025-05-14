@@ -69,28 +69,23 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation (libs.toasty)
 
-    // CameraX
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)
     implementation(libs.camera.lifecycle)
     implementation(libs.camera.view)
 
-    // TensorFlow Lite (使用統一版本)
     implementation("org.tensorflow:tensorflow-lite:2.13.0")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
     implementation("org.tensorflow:tensorflow-lite-metadata:0.4.4")
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
-    // Supabase
     implementation("io.github.jan-tennert.supabase:postgrest-kt:1.4.7")
     implementation("io.github.jan-tennert.supabase:gotrue-kt:1.4.7")
     implementation("io.github.jan-tennert.supabase:storage-kt:1.4.7")
     implementation("io.ktor:ktor-client-android:2.3.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
-    // PDF Generation capabilities are provided by the Android platform
-    // through the android.graphics.pdf.PdfDocument class
 
     implementation("com.itextpdf:itext7-core:7.2.5")
 }

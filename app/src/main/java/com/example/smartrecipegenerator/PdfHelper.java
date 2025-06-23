@@ -30,8 +30,8 @@ import java.util.regex.Pattern;
 
 public class PdfHelper {
     private static final String TAG = "PdfHelper";
-    private static final int PAGE_WIDTH = 595; // A4 width in points (72 points = 1 inch)
-    private static final int PAGE_HEIGHT = 842; // A4 height in points
+    private static final int PAGE_WIDTH = 595;
+    private static final int PAGE_HEIGHT = 842;
     private static final int MARGIN = 50;
     private static final int TITLE_TEXT_SIZE = 24;
     private static final int SUBTITLE_TEXT_SIZE = 16;
@@ -42,12 +42,10 @@ public class PdfHelper {
     private static final int MAX_IMAGE_HEIGHT = 300;
 
     /**
-     * Generate a PDF from recipe data and share it
-     *
-     * @param context The context
-     * @param title The recipe title
-     * @param htmlContent The recipe content in HTML format
-     * @param base64Image The base64 encoded image (with or without data URL prefix)
+     * @param context
+     * @param title
+     * @param htmlContent
+     * @param base64Image
      */
     public static void generateAndShareRecipePdf(Context context, String title, String htmlContent, String base64Image) {
         try {
@@ -56,19 +54,14 @@ public class PdfHelper {
                 safeTitle = "recipe";
             }
 
-            // Create PDF file in cache directory with recipe title
             File pdfFile = new File(context.getCacheDir(), safeTitle + "_recipe.pdf");
 
-            // Convert HTML to plain text
             String plainText = Html.fromHtml(htmlContent, Html.FROM_HTML_MODE_COMPACT).toString();
 
-            // Parse the content into sections
             List<RecipeSection> sections = parseRecipeSections(plainText, title);
 
-            // Decode base64 image
             Bitmap image = null;
             if (base64Image != null && !base64Image.isEmpty()) {
-                // Extract base64 data from data URL if present
                 String base64Data = base64Image;
                 if (base64Image.contains(",")) {
                     base64Data = base64Image.split(",")[1];
@@ -78,7 +71,6 @@ public class PdfHelper {
                     byte[] decodedBytes = Base64.decode(base64Data, Base64.DEFAULT);
                     image = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
 
-                    // Scale the image to fit within the page while maintaining aspect ratio
                     if (image != null) {
                         image = scaleImage(image, MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT);
                     }
@@ -87,10 +79,8 @@ public class PdfHelper {
                 }
             }
 
-            // Generate the PDF
             PdfDocument pdfDocument = new PdfDocument();
 
-            // Set up paint objects for different text elements
             Paint titlePaint = new Paint();
             titlePaint.setColor(Color.BLACK);
             titlePaint.setTextSize(TITLE_TEXT_SIZE);
@@ -106,7 +96,6 @@ public class PdfHelper {
             contentPaint.setColor(Color.BLACK);
             contentPaint.setTextSize(CONTENT_TEXT_SIZE);
 
-            // Start creating the document
             int pageNumber = 1;
             PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pageNumber).create();
             PdfDocument.Page page = pdfDocument.startPage(pageInfo);
@@ -115,21 +104,17 @@ public class PdfHelper {
             int yOffset = MARGIN;
             boolean titleDrawn = false;
 
-            // Draw title only on the first page
             canvas.drawText(title, PAGE_WIDTH / 2f, yOffset + TITLE_TEXT_SIZE, titlePaint);
-            yOffset += TITLE_TEXT_SIZE + 20; // Space after title
+            yOffset += TITLE_TEXT_SIZE + 20;
             titleDrawn = true;
 
-            // Draw image on the first page if available
             if (image != null) {
                 float imageX = (PAGE_WIDTH - image.getWidth()) / 2f;
                 canvas.drawBitmap(image, imageX, yOffset, null);
-                yOffset += image.getHeight() + 20; // Space after image
+                yOffset += image.getHeight() + 20;
             }
 
-            // Draw each section
             for (RecipeSection section : sections) {
-                // Check if we need to start a new page (if not enough space for section title + at least some content)
                 int spaceNeeded = SUBTITLE_TEXT_SIZE + SECTION_SPACING;
                 if (yOffset + spaceNeeded > PAGE_HEIGHT - MARGIN) {
                     pdfDocument.finishPage(page);
@@ -140,12 +125,9 @@ public class PdfHelper {
                     yOffset = MARGIN;
                 }
 
-                // Draw section title if it's not the main title (avoid repetition)
                 if (!section.title.trim().equalsIgnoreCase(title.trim())) {
-                    // Handle potentially long section titles by wrapping them
                     TextPaint sectionTitlePaint = new TextPaint(subtitlePaint);
 
-                    // Create text layout for section title to properly wrap long titles
                     StaticLayout titleLayout = StaticLayout.Builder.obtain(
                             section.title, 0, section.title.length(),
                             sectionTitlePaint, PAGE_WIDTH - (MARGIN * 2))
@@ -153,7 +135,6 @@ public class PdfHelper {
                             .setIncludePad(false)
                             .build();
 
-                    // Check if we need a new page for this title
                     if (yOffset + titleLayout.getHeight() + 10 > PAGE_HEIGHT - MARGIN) {
                         pdfDocument.finishPage(page);
                         pageNumber++;
@@ -163,7 +144,6 @@ public class PdfHelper {
                         yOffset = MARGIN;
                     }
 
-                    // Draw the wrapped section title
                     canvas.save();
                     canvas.translate(MARGIN, yOffset);
                     titleLayout.draw(canvas);
@@ -172,10 +152,8 @@ public class PdfHelper {
                     yOffset += titleLayout.getHeight() + 10;
                 }
 
-                // Calculate available height for content on this page
                 int availableHeight = PAGE_HEIGHT - yOffset - MARGIN;
 
-                // Prepare the text layout
                 StaticLayout textLayout = StaticLayout.Builder.obtain(
                         section.content, 0, section.content.length(),
                         contentPaint, PAGE_WIDTH - (MARGIN * 2))
@@ -183,9 +161,7 @@ public class PdfHelper {
                         .setIncludePad(false)
                         .build();
 
-                // Check if content fits on current page
                 if (textLayout.getHeight() <= availableHeight) {
-                    // Content fits, draw it
                     canvas.save();
                     canvas.translate(MARGIN, yOffset);
                     textLayout.draw(canvas);
@@ -193,12 +169,10 @@ public class PdfHelper {
 
                     yOffset += textLayout.getHeight() + SECTION_SPACING;
                 } else {
-                    // Content doesn't fit, need to split across pages
                     int lineCount = textLayout.getLineCount();
                     int currentLine = 0;
 
                     while (currentLine < lineCount) {
-                        // Find how many lines fit on the current page
                         int linesOnThisPage = 0;
                         int heightSoFar = 0;
 
@@ -210,7 +184,6 @@ public class PdfHelper {
                                            textLayout.getLineTop(currentLine);
                         }
 
-                        // Draw the lines that fit
                         if (linesOnThisPage > 0) {
                             int startOffset = textLayout.getLineStart(currentLine);
                             int endOffset = textLayout.getLineEnd(currentLine + linesOnThisPage - 1);
@@ -229,11 +202,9 @@ public class PdfHelper {
 
                             currentLine += linesOnThisPage;
                         } else {
-                            // Just in case something went wrong and we couldn't fit any lines
                             currentLine++;
                         }
 
-                        // Move to next page if there are more lines
                         if (currentLine < lineCount) {
                             pdfDocument.finishPage(page);
                             pageNumber++;
@@ -249,16 +220,13 @@ public class PdfHelper {
                 }
             }
 
-            // Finish the last page
             pdfDocument.finishPage(page);
 
-            // Write to file
             FileOutputStream fos = new FileOutputStream(pdfFile);
             pdfDocument.writeTo(fos);
             pdfDocument.close();
             fos.close();
 
-            // Share the PDF
             sharePdf(context, pdfFile);
 
         } catch (IOException e) {
@@ -267,27 +235,20 @@ public class PdfHelper {
         }
     }
 
-    /**
-     * Parse the recipe text into sections
-     */
     private static List<RecipeSection> parseRecipeSections(String text, String title) {
         List<RecipeSection> sections = new ArrayList<>();
 
-        // Only use the most common and reliable section headers
         String[] commonSections = {"Ingredients", "Instructions", "Cooking Time", "Nutritional Information"};
 
-        // Split text by newlines to get lines
         String[] lines = text.split("\n");
 
         StringBuilder currentContent = new StringBuilder();
         String currentTitle = "";
         boolean inSection = false;
 
-        // Remove any duplicated titles at the beginning
         int startLine = 0;
         String titleLowerCase = title.toLowerCase().trim();
 
-        // Skip any lines at the beginning that contain the title text
         while (startLine < lines.length &&
                (lines[startLine].trim().isEmpty() ||
                 lines[startLine].toLowerCase().trim().contains(titleLowerCase))) {
@@ -298,16 +259,13 @@ public class PdfHelper {
             String line = lines[i].trim();
             if (line.isEmpty()) continue;
 
-            // Skip any line that's identical to or very similar to the main title
             if (line.equalsIgnoreCase(title) ||
                 (line.toLowerCase().contains(titleLowerCase) && line.length() < title.length() * 1.5)) {
                 continue;
             }
 
-            // Check if this line is a section title
             boolean isSectionTitle = false;
 
-            // Check exact matches with common section titles
             for (String sectionName : commonSections) {
                 if (line.toLowerCase().startsWith(sectionName.toLowerCase())) {
                     isSectionTitle = true;
@@ -316,7 +274,6 @@ public class PdfHelper {
             }
 
             if (isSectionTitle) {
-                // Save previous section if it exists
                 if (!currentTitle.isEmpty() && currentContent.length() > 0) {
                     sections.add(new RecipeSection(currentTitle, currentContent.toString().trim()));
                     currentContent = new StringBuilder();
@@ -324,12 +281,10 @@ public class PdfHelper {
                 currentTitle = line;
                 inSection = true;
             } else {
-                // If no title has been set yet, use the recipe title
                 if (currentTitle.isEmpty()) {
                     currentTitle = title;
                 }
 
-                // Add to current content
                 if (currentContent.length() > 0) {
                     currentContent.append("\n");
                 }
@@ -338,12 +293,10 @@ public class PdfHelper {
             }
         }
 
-        // Add the last section
         if (!currentTitle.isEmpty() && currentContent.length() > 0) {
             sections.add(new RecipeSection(currentTitle, currentContent.toString().trim()));
         }
 
-        // If no sections were identified, create a single section with the whole content
         if (sections.isEmpty()) {
             sections.add(new RecipeSection(title, text.trim()));
         }
@@ -352,35 +305,30 @@ public class PdfHelper {
     }
 
     /**
-     * Share the generated PDF file
      *
-     * @param context The context
-     * @param pdfFile The PDF file to share
+     * @param context
+     * @param pdfFile
      */
     private static void sharePdf(Context context, File pdfFile) {
-        // Get content URI using FileProvider
         Uri contentUri = FileProvider.getUriForFile(
                 context,
                 context.getPackageName() + ".fileprovider",
                 pdfFile);
 
-        // Create intent
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("application/pdf");
         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        // Start the sharing activity
         context.startActivity(Intent.createChooser(shareIntent, "Share Recipe PDF"));
     }
 
     /**
-     * Scale a bitmap to fit within maxWidth and maxHeight while maintaining aspect ratio
      *
-     * @param source The source bitmap
-     * @param maxWidth Maximum width
-     * @param maxHeight Maximum height
-     * @return Scaled bitmap
+     * @param source
+     * @param maxWidth
+     * @param maxHeight
+     * @return
      */
     private static Bitmap scaleImage(Bitmap source, int maxWidth, int maxHeight) {
         int width = source.getWidth();
@@ -396,9 +344,6 @@ public class PdfHelper {
         return Bitmap.createScaledBitmap(source, newWidth, newHeight, true);
     }
 
-    /**
-     * Helper class to represent a section of the recipe
-     */
     private static class RecipeSection {
         public String title;
         public String content;

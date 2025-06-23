@@ -9,7 +9,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- 頂部導航欄 -->
         <header class="app-header">
             <div class="back-icon" onclick="goBack()">
                 <i class="fas fa-arrow-left"></i>
@@ -21,9 +20,7 @@
             <div class="placeholder-icon"></div>
         </header>
 
-        <!-- 主要內容區域 -->
         <main class="main-content">
-            <!-- 添加物品區域 -->
             <section class="add-item-section">
                 <div class="input-container">
                     <input type="text" id="new-item" placeholder="Add new ingredient...">
@@ -34,7 +31,6 @@
                 </button>
             </section>
 
-            <!-- 食材列表區域 -->
             <section class="pantry-list-section">
                 <div class="section-header">
                     <h2><i class="fas fa-list"></i> My Ingredients</h2>
@@ -42,7 +38,6 @@
                 </div>
 
                 <div class="pantry-list" id="pantry-list">
-                    <!-- 物品將通過 JavaScript 動態添加 -->
                     <div class="empty-message" id="empty-message">
                         <div class="empty-icon">
                             <i class="fas fa-shopping-basket"></i>
@@ -54,7 +49,6 @@
             </section>
         </main>
 
-        <!-- 底部導航欄 -->
         <nav class="bottom-nav">
             <div class="nav-item" onclick="location.href='home.html'">
                 <i class="fas fa-home"></i>

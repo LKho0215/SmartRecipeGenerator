@@ -77,7 +77,6 @@ h3 {
     font-size: 18px;
 }
 
-/* 步驟指示器 */
 .step-indicator {
     display: flex;
     justify-content: center;
@@ -121,7 +120,6 @@ h3 {
     background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
 }
 
-/* 步驟內容 */
 .step-content {
     flex: 1;
     overflow-y: auto;
@@ -138,7 +136,6 @@ h3 {
     transform: translateX(0);
 }
 
-/* 自定義滾動條 */
 .step-content::-webkit-scrollbar {
     width: 6px;
 }
@@ -157,7 +154,6 @@ h3 {
     background: #5a0cb6;
 }
 
-/* 食譜類型選項 */
 .recipe-types {
     display: flex;
     flex-wrap: wrap;
@@ -249,7 +245,6 @@ h3 {
     transform: scale(1.2);
 }
 
-/* 食材選擇 */
 .pantry-items {
     display: flex;
     flex-wrap: wrap;
@@ -359,7 +354,6 @@ h3 {
     font-style: italic;
 }
 
-/* 食譜生成 */
 .recipe-summary {
     margin: 25px 0;
     padding: 20px;
@@ -436,7 +430,6 @@ h3 {
     100% { transform: rotate(360deg); }
 }
 
-/* 導航按鈕 */
 .navigation-buttons {
     display: flex;
     justify-content: space-between;
@@ -477,7 +470,6 @@ h3 {
     box-shadow: 0 6px 15px rgba(106, 17, 203, 0.4);
 }
 
-/* 食譜結果容器 */
 .recipe-result-container {
     margin-top: 25px;
     background-color: #fff;
@@ -487,7 +479,6 @@ h3 {
     animation: fadeIn 0.5s ease-out;
 }
 
-/* 可滾動的食譜結果區域 */
 .recipe-result-scroll {
     max-height: 300px;
     overflow-y: auto;
@@ -498,7 +489,6 @@ h3 {
     background-color: #f8f9fa;
 }
 
-/* 美化滾動條 */
 .recipe-result-scroll::-webkit-scrollbar {
     width: 8px;
 }
@@ -517,7 +507,6 @@ h3 {
     background: #5a0cb6;
 }
 
-/* 食譜內容樣式 */
 #recipe-result {
     white-space: pre-wrap;
     line-height: 1.7;
@@ -525,7 +514,6 @@ h3 {
     color: #333;
 }
 
-/* 保存食譜按鈕 */
 .save-recipe-btn {
     background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
     color: white;
@@ -562,7 +550,6 @@ h3 {
     left: 100%;
 }
 
-/* 空狀態樣式 */
 .empty-pantry {
     text-align: center;
     color: #888;
@@ -587,7 +574,6 @@ h3 {
     font-style: italic;
 }
 
-/* 響應式設計 */
 @media (max-width: 480px) {
     .recipe-container {
         padding: 15px;

@@ -21,35 +21,28 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import com.example.smartrecipegenerator.BuildConfig;
 
 public class SupabaseHelper {
     private static final String TAG = "SupabaseHelper";
 
-    // Supabase 配置
     private static final String SUPABASE_URL = "https://zudkfhhtyrwtsrsvtxlf.supabase.co";
-    private static final String SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1ZGtmaGh0eXJ3dHNyc3Z0eGxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIyNzc3NjcsImV4cCI6MjA1Nzg1Mzc2N30.pKTCsMU5TQuMjrp7D7lUWStasj9WiyBWOswBb9vFvsI";
+    private static final String SUPABASE_KEY = BuildConfig.SUPABASE_API_KEY;
 
-    // 表名
     private static final String TABLE_USERS = "users";
     private static final String TABLE_PANTRY = "pantry";
     private static final String TABLE_RECIPES = "recipes";
 
-    // JSON MediaType
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    // OkHttpClient 實例
     private final OkHttpClient client = new OkHttpClient();
 
-    // Context
     private final Context context;
 
     public SupabaseHelper(Context context) {
         this.context = context;
     }
 
-    /**
-     * 生成臨時用戶名
-     */
     private String generateTempUsername() {
         String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder sb = new StringBuilder();
@@ -61,23 +54,20 @@ public class SupabaseHelper {
     }
 
     /**
-     * 註冊新用戶
-     * @param email 用戶郵箱
-     * @param password 用戶密碼
-     * @param callback 回調函數
+     *
+     * @param email
+     * @param password
+     * @param callback
      */
     public void signUp(String email, String password, final SupabaseCallback<Boolean> callback) {
         try {
-            // 生成臨時用戶名
             String tempUsername = generateTempUsername();
 
-            // 創建請求體
             JSONObject requestBody = new JSONObject();
             requestBody.put("name", tempUsername);
             requestBody.put("email", email);
             requestBody.put("password", password);
 
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_USERS)
                 .addHeader("apikey", SUPABASE_KEY)
@@ -87,7 +77,6 @@ public class SupabaseHelper {
                 .post(RequestBody.create(requestBody.toString(), JSON))
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -113,14 +102,13 @@ public class SupabaseHelper {
     }
 
     /**
-     * 用戶登錄
-     * @param email 用戶郵箱
-     * @param password 用戶密碼
-     * @param callback 回調函數
+     *
+     * @param email
+     * @param password
+     * @param callback
      */
     public void signIn(String email, String password, final SupabaseCallback<Boolean> callback) {
         try {
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_USERS + "?email=eq." + email + "&password=eq." + password + "&select=id,email")
                 .addHeader("apikey", SUPABASE_KEY)
@@ -128,7 +116,6 @@ public class SupabaseHelper {
                 .get()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -147,7 +134,6 @@ public class SupabaseHelper {
                                 String userEmail = user.getString("email");
                                 int userId = user.getInt("id");
 
-                                // 保存用戶信息到 SharedPreferences
                                 SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                                 prefs.edit()
                                     .putString("email", userEmail)
@@ -176,13 +162,12 @@ public class SupabaseHelper {
     }
 
     /**
-     * 獲取用戶信息
-     * @param email 用戶郵箱
-     * @param callback 回調函數
+     *
+     * @param email
+     * @param callback
      */
     public void getUserInfo(String email, final SupabaseCallback<UserInfo> callback) {
         try {
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_USERS + "?email=eq." + email + "&select=name,email")
                 .addHeader("apikey", SUPABASE_KEY)
@@ -190,7 +175,6 @@ public class SupabaseHelper {
                 .get()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -232,18 +216,16 @@ public class SupabaseHelper {
     }
 
     /**
-     * 更新用戶名
-     * @param userId 用戶ID
-     * @param newName 新用戶名
-     * @param callback 回調函數
+     *
+     * @param userId
+     * @param newName
+     * @param callback
      */
     public void updateUserName(int userId, String newName, final SupabaseCallback<Boolean> callback) {
         try {
-            // 創建請求體
             JSONObject requestBody = new JSONObject();
             requestBody.put("name", newName);
 
-            // 創建請求
             RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"),
                 requestBody.toString()
@@ -258,7 +240,6 @@ public class SupabaseHelper {
                 .patch(body)
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -284,18 +265,16 @@ public class SupabaseHelper {
     }
 
     /**
-     * 更新用戶郵箱
-     * @param userId 用戶ID
-     * @param newEmail 新郵箱
-     * @param callback 回調函數
+     *
+     * @param userId
+     * @param newEmail
+     * @param callback
      */
     public void updateUserEmail(int userId, String newEmail, final SupabaseCallback<Boolean> callback) {
         try {
-            // 創建請求體
             JSONObject requestBody = new JSONObject();
             requestBody.put("email", newEmail);
 
-            // 創建請求
             RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"),
                 requestBody.toString()
@@ -310,7 +289,6 @@ public class SupabaseHelper {
                 .patch(body)
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -336,18 +314,16 @@ public class SupabaseHelper {
     }
 
     /**
-     * 更新用戶密碼
-     * @param userId 用戶ID
-     * @param newPassword 新密碼
-     * @param callback 回調函數
+     *
+     * @param userId
+     * @param newPassword
+     * @param callback
      */
     public void updateUserPassword(int userId, String newPassword, final SupabaseCallback<Boolean> callback) {
         try {
-            // 創建請求體
             JSONObject requestBody = new JSONObject();
             requestBody.put("password", newPassword);
 
-            // 創建請求
             RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"),
                 requestBody.toString()
@@ -362,7 +338,6 @@ public class SupabaseHelper {
                 .patch(body)
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -388,13 +363,12 @@ public class SupabaseHelper {
     }
 
     /**
-     * 獲取用戶 ID
-     * @param email 用戶郵箱
-     * @param callback 回調函數
+     *
+     * @param email
+     * @param callback
      */
     public void getUserId(String email, final SupabaseCallback<Integer> callback) {
         try {
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_USERS + "?email=eq." + email + "&select=id")
                 .addHeader("apikey", SUPABASE_KEY)
@@ -402,7 +376,6 @@ public class SupabaseHelper {
                 .get()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -422,7 +395,7 @@ public class SupabaseHelper {
                                 int userId = userObject.getInt("id");
                                 callback.onSuccess(userId);
                             } else {
-                                callback.onSuccess(-1); // 用戶不存在
+                                callback.onSuccess(-1);
                             }
                         } catch (JSONException e) {
                             Log.e(TAG, "Error parsing JSON", e);
@@ -442,19 +415,17 @@ public class SupabaseHelper {
     }
 
     /**
-     * 添加物品到 Pantry
-     * @param userId 用戶 ID
-     * @param itemName 物品名稱
-     * @param callback 回調函數
+     *
+     * @param userId
+     * @param itemName
+     * @param callback
      */
     public void addItemToPantry(int userId, String itemName, final SupabaseCallback<Boolean> callback) {
         try {
-            // 創建請求體
             JSONObject requestBody = new JSONObject();
             requestBody.put("user_id", userId);
             requestBody.put("item_name", itemName);
 
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_PANTRY)
                 .addHeader("apikey", SUPABASE_KEY)
@@ -464,7 +435,6 @@ public class SupabaseHelper {
                 .post(RequestBody.create(requestBody.toString(), JSON))
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -490,15 +460,14 @@ public class SupabaseHelper {
     }
 
     /**
-     * 獲取用戶的 Pantry 物品
-     * @param userId 用戶 ID
-     * @param callback 回調函數
+     *
+     * @param userId
+     * @param callback
      */
     public void getUserPantryItems(int userId, final SupabaseCallback<List<PantryItem>> callback) {
         try {
             Log.d(TAG, "Getting pantry items for user ID: " + userId);
 
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_PANTRY + "?user_id=eq." + userId + "&order=created_at.desc")
                 .addHeader("apikey", SUPABASE_KEY)
@@ -506,7 +475,6 @@ public class SupabaseHelper {
                 .get()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -553,13 +521,12 @@ public class SupabaseHelper {
     }
 
     /**
-     * 從 Pantry 刪除物品
-     * @param itemId 物品 ID
-     * @param callback 回調函數
+     *
+     * @param itemId
+     * @param callback
      */
     public void deleteItemFromPantry(int itemId, final SupabaseCallback<Boolean> callback) {
         try {
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_PANTRY + "?id=eq." + itemId)
                 .addHeader("apikey", SUPABASE_KEY)
@@ -567,7 +534,6 @@ public class SupabaseHelper {
                 .delete()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -593,13 +559,12 @@ public class SupabaseHelper {
     }
 
     /**
-     * 刪除用戶
-     * @param email 用戶郵箱
-     * @param callback 回調函數
+     *
+     * @param email
+     * @param callback
      */
     public void deleteUser(String email, final SupabaseCallback<Boolean> callback) {
         try {
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_USERS + "?email=eq." + email)
                 .addHeader("apikey", SUPABASE_KEY)
@@ -607,7 +572,6 @@ public class SupabaseHelper {
                 .delete()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -633,23 +597,21 @@ public class SupabaseHelper {
     }
 
     /**
-     * 保存食譜到數據庫
-     * @param userId 用戶 ID
-     * @param title 食譜標題
-     * @param content 食譜內容
-     * @param imageUrl 食譜圖片 URL
-     * @param callback 回調函數
+     *
+     * @param userId
+     * @param title
+     * @param content
+     * @param imageUrl
+     * @param callback
      */
     public void saveRecipe(int userId, String title, String content, String imageUrl, final SupabaseCallback<Boolean> callback) {
         try {
-            // 創建請求體
             JSONObject requestBody = new JSONObject();
             requestBody.put("user_id", userId);
             requestBody.put("title", title);
             requestBody.put("content", content);
             requestBody.put("image_url", imageUrl);
 
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_RECIPES)
                 .addHeader("apikey", SUPABASE_KEY)
@@ -659,7 +621,6 @@ public class SupabaseHelper {
                 .post(RequestBody.create(requestBody.toString(), JSON))
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -685,13 +646,12 @@ public class SupabaseHelper {
     }
 
     /**
-     * 獲取用戶的所有食譜
-     * @param userId 用戶ID
-     * @param callback 回調函數
+     *
+     * @param userId
+     * @param callback
      */
     public void getUserRecipes(int userId, final SupabaseCallback<List<Recipe>> callback) {
         try {
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_RECIPES + "?user_id=eq." + userId + "&order=created_at.desc")
                 .addHeader("apikey", SUPABASE_KEY)
@@ -699,7 +659,6 @@ public class SupabaseHelper {
                 .get()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -747,13 +706,12 @@ public class SupabaseHelper {
     }
 
     /**
-     * 獲取單個食譜詳情
-     * @param recipeId 食譜ID
-     * @param callback 回調函數
+     *
+     * @param recipeId
+     * @param callback
      */
     public void getRecipeById(int recipeId, final SupabaseCallback<Recipe> callback) {
         try {
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_RECIPES + "?id=eq." + recipeId)
                 .addHeader("apikey", SUPABASE_KEY)
@@ -761,7 +719,6 @@ public class SupabaseHelper {
                 .get()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -807,16 +764,15 @@ public class SupabaseHelper {
     }
 
     /**
-     * 刪除食譜
-     * @param recipeId 食譜ID
-     * @param userId 用戶ID
-     * @param callback 回調函數
+     *
+     * @param recipeId
+     * @param userId
+     * @param callback
      */
     public void deleteRecipe(int recipeId, int userId, final SupabaseCallback<Boolean> callback) {
         try {
             Log.d(TAG, "Deleting recipe with ID: " + recipeId + " for user ID: " + userId);
 
-            // 創建請求
             Request request = new Request.Builder()
                 .url(SUPABASE_URL + "/rest/v1/" + TABLE_RECIPES + "?id=eq." + recipeId + "&user_id=eq." + userId)
                 .addHeader("apikey", SUPABASE_KEY)
@@ -824,7 +780,6 @@ public class SupabaseHelper {
                 .delete()
                 .build();
 
-            // 發送請求
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -850,9 +805,6 @@ public class SupabaseHelper {
         }
     }
 
-    /**
-     * 回調接口
-     */
     public interface SupabaseCallback<T> {
         void onSuccess(T result);
         void onError(String errorMessage);

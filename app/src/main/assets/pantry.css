@@ -1,4 +1,3 @@
-/* 基本樣式 */
 * {
     margin: 0;
     padding: 0;
@@ -21,7 +20,6 @@ body {
     overflow-x: hidden;
 }
 
-/* 頂部導航欄 */
 .app-header {
     display: flex;
     justify-content: space-between;
@@ -99,7 +97,6 @@ body {
     color: #333;
 }
 
-/* 主要內容區域 */
 .main-content {
     flex: 1;
     padding: 20px;
@@ -117,7 +114,6 @@ body {
     }
 }
 
-/* 添加物品區域 */
 .add-item-section {
     display: flex;
     margin-bottom: 24px;
@@ -186,7 +182,6 @@ body {
     transform: translateY(0);
 }
 
-/* 食材列表區域 */
 .pantry-list-section {
     background-color: white;
     border-radius: 16px;
@@ -346,7 +341,6 @@ body {
     opacity: 0.7;
 }
 
-/* 底部導航欄 */
 .bottom-nav {
     display: flex;
     justify-content: space-around;
@@ -414,7 +408,6 @@ body {
     box-shadow: 0 6px 15px rgba(106, 17, 203, 0.4);
 }
 
-/* 響應式設計 */
 @media (min-width: 768px) {
     .main-content {
         max-width: 768px;

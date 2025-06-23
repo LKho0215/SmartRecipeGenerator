@@ -9,7 +9,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- 頂部導航欄 -->
         <header class="app-header">
             <div class="back-icon" onclick="goToHome()">
                 <i class="fas fa-arrow-left"></i>
@@ -21,7 +20,6 @@
             <div class="placeholder-icon"></div>
         </header>
 
-        <!-- 搜索區域 -->
         <div class="search-container">
             <div class="search-box">
                 <i class="fas fa-search search-icon"></i>
@@ -30,29 +28,24 @@
             </div>
         </div>
 
-        <!-- 主要內容區域 -->
         <main class="main-content">
             <!-- 搜索結果計數 -->
             <div class="search-results-count" id="results-count">
                 All saved recipes
             </div>
 
-            <!-- 無結果提示 -->
             <div class="no-results" id="no-results" style="display: none;">
                 <i class="fas fa-search"></i>
                 <p>No recipes found</p>
                 <p class="no-results-sub">Try different keywords or check your saved recipes</p>
             </div>
 
-            <!-- 食譜列表 -->
             <div class="recipes-container" id="recipes-container">
-                <!-- 加載動畫 -->
                 <div class="loading-container" id="loading-container">
                     <div class="spinner"></div>
                     <p>Loading your recipes...</p>
                 </div>
 
-                <!-- 食譜卡片將通過 JavaScript 動態添加 -->
             </div>
         </main>
 

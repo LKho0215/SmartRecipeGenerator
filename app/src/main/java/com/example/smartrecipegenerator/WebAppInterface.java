@@ -36,6 +36,7 @@ import android.text.Html;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.nio.charset.StandardCharsets;
+import com.example.smartrecipegenerator.BuildConfig;
 
 public class WebAppInterface {
     private Context context;
@@ -43,9 +44,9 @@ public class WebAppInterface {
     private SupabaseHelper supabaseHelper;
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static final String GEMINI_API_KEY = "AIzaSyB6cHgVlwh15xwLhgpRnpubCwV4AdUV0Q0"; // 替換為你的 Gemini API 密鑰
+    private static final String GEMINI_API_KEY = BuildConfig.GEMINI_API_KEY;
     private String generatedRecipe = "";
-    private String currentImageUrl = ""; // 新增變量來存儲當前圖片URL
+    private String currentImageUrl = "";
 
     WebAppInterface(Context context, WebView webView) {
         this.context = context;
@@ -55,7 +56,6 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void signIn(String email, String password) {
-        // 對輸入的密碼進行哈希處理
         String hashedPassword = hashPassword(password);
 
         supabaseHelper.signIn(email, hashedPassword, new SupabaseHelper.SupabaseCallback<Boolean>() {
@@ -86,7 +86,6 @@ public class WebAppInterface {
         });
     }
 
-    // 保存登錄狀態
     private void saveLoginState(String email) {
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -97,7 +96,6 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void signUp(String email, String password) {
-        // 後端再次驗證密碼長度
         if (password.length() < 6) {
             ((Activity) context).runOnUiThread(() -> {
                 Toasty.error(context, "Password must be at least 6 characters long", Toast.LENGTH_SHORT, true).show();
@@ -105,7 +103,6 @@ public class WebAppInterface {
             return;
         }
 
-        // 對密碼進行哈希處理
         String hashedPassword = hashPassword(password);
 
         supabaseHelper.signUp(email, hashedPassword, new SupabaseHelper.SupabaseCallback<Boolean>() {
@@ -132,16 +129,12 @@ public class WebAppInterface {
         });
     }
 
-    // 添加哈希密碼的方法
     private String hashPassword(String password) {
         try {
-            // 創建 MessageDigest 實例，使用 SHA-256 算法
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
-            // 將密碼轉換為字節數組並進行哈希
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
 
-            // 將字節數組轉換為十六進制字符串
             StringBuilder hexString = new StringBuilder();
             for (byte b : hash) {
                 String hex = Integer.toHexString(0xff & b);
@@ -154,7 +147,6 @@ public class WebAppInterface {
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
             Log.e("PasswordHash", "Error hashing password", e);
-            // 如果哈希失敗，返回原始密碼（不應該發生）
             return password;
         }
     }
@@ -206,23 +198,19 @@ public class WebAppInterface {
         String email = prefs.getString("email", "");
 
         if (!email.isEmpty()) {
-            // 首先獲取用戶ID
             supabaseHelper.getUserId(email, new SupabaseHelper.SupabaseCallback<Integer>() {
                 @Override
                 public void onSuccess(Integer userId) {
                     if (userId != -1) {
-                        // 使用用戶ID更新用戶名
                         supabaseHelper.updateUserName(userId, newName, new SupabaseHelper.SupabaseCallback<Boolean>() {
                             @Override
                             public void onSuccess(Boolean result) {
                                 ((Activity) context).runOnUiThread(() -> {
                                     if (result) {
-                                        // 更新本地存儲的用戶名
                                         SharedPreferences.Editor editor = prefs.edit();
                                         editor.putString("name", newName);
                                         editor.apply();
 
-                                        // 通知前端更新成功
                                         webView.evaluateJavascript(
                                             "handleUpdateSuccess('Name updated successfully')",
                                             null
@@ -313,7 +301,6 @@ public class WebAppInterface {
         String email = prefs.getString("email", "");
 
         if (!email.isEmpty()) {
-            // 首先獲取用戶 ID，然後獲取 Pantry 物品
             supabaseHelper.getUserId(email, new SupabaseHelper.SupabaseCallback<Integer>() {
                 @Override
                 public void onSuccess(Integer userId) {
@@ -397,7 +384,6 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void deleteAccount() {
-        // 從 SharedPreferences 獲取當前登錄用戶的郵箱
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         String currentUserEmail = prefs.getString("email", "");
 
@@ -406,21 +392,17 @@ public class WebAppInterface {
             return;
         }
 
-        // 從數據庫刪除用戶
         supabaseHelper.deleteUser(currentUserEmail, new SupabaseHelper.SupabaseCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 if (result) {
-                    // 清除 SharedPreferences 中的用戶信息
                     prefs.edit().clear().apply();
 
-                    // 返回登錄頁面
                     ((Activity)context).runOnUiThread(() -> {
                         Toast.makeText(context, "Account deleted successfully", Toast.LENGTH_SHORT).show();
                         ((MainActivity)context).getWebView().loadUrl("file:///android_asset/login.html");
                     });
                 } else {
-                    // 顯示錯誤消息
                     Toast.makeText(context, "Deleting account failed, please try again later", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -440,7 +422,6 @@ public class WebAppInterface {
         String email = prefs.getString("email", "");
 
         if (!email.isEmpty()) {
-            // 首先獲取用戶 ID，然後獲取 Pantry 物品
             supabaseHelper.getUserId(email, new SupabaseHelper.SupabaseCallback<Integer>() {
                 @Override
                 public void onSuccess(Integer userId) {
@@ -502,33 +483,28 @@ public class WebAppInterface {
 
         new Thread(() -> {
             try {
-                // 解析食譜數據
                 JSONObject recipeData = new JSONObject(recipeDataJson);
                 JSONArray typesArray = recipeData.getJSONArray("types");
                 JSONArray ingredientsArray = recipeData.getJSONArray("ingredients");
 
-                // 構建類型字符串
                 StringBuilder typesBuilder = new StringBuilder();
                 for (int i = 0; i < typesArray.length(); i++) {
                     if (i > 0) typesBuilder.append(", ");
                     typesBuilder.append(typesArray.getString(i));
                 }
 
-                // 構建食材字符串
                 StringBuilder ingredientsBuilder = new StringBuilder();
                 for (int i = 0; i < ingredientsArray.length(); i++) {
                     if (i > 0) ingredientsBuilder.append(", ");
                     ingredientsBuilder.append(ingredientsArray.getString(i));
                 }
 
-                // 構建 Gemini API 請求
                 OkHttpClient client = new OkHttpClient.Builder()
                         .connectTimeout(60, TimeUnit.SECONDS)
                         .writeTimeout(60, TimeUnit.SECONDS)
                         .readTimeout(60, TimeUnit.SECONDS)
                         .build();
 
-                // 構建提示
                 String prompt = "Create a detailed recipe using these ingredients: " +
                         ingredientsBuilder.toString() + ". The recipe should be " +
                         typesBuilder.toString() + ". Include a title, ingredients list with measurements, " +
@@ -537,7 +513,6 @@ public class WebAppInterface {
 
                 Log.d("RecipeGenerator", "Prompt: " + prompt);
 
-                // 構建 Gemini API 請求體
                 JSONObject requestJson = new JSONObject();
 
                 JSONArray contentsArray = new JSONArray();
@@ -564,7 +539,6 @@ public class WebAppInterface {
 
                 RequestBody body = RequestBody.create(requestBodyString, JSON);
 
-                // 構建 URL 並添加 API 密鑰作為查詢參數
                 String url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY;
 
                 Request request = new Request.Builder()
@@ -575,23 +549,19 @@ public class WebAppInterface {
 
                 Log.d("RecipeGenerator", "Created request with headers: " + request.headers());
 
-                // 發送請求並處理響應
                 Log.d("RecipeGenerator", "Sending request to Gemini API...");
                 Response response = client.newCall(request).execute();
 
-                // 獲取響應體
                 String responseBody = response.body().string();
                 Log.d("RecipeGenerator", "Response code: " + response.code());
                 Log.d("RecipeGenerator", "Response body (first 500 chars): " +
                         (responseBody.length() > 500 ? responseBody.substring(0, 500) + "..." : responseBody));
 
-                // 檢查響應是否成功
                 if (!response.isSuccessful()) {
                     Log.e("RecipeGenerator", "Unsuccessful response: " + response.code());
                     throw new IOException("Unexpected response code: " + response.code() + "\nBody: " + responseBody);
                 }
 
-                // 解析 Gemini 響應
                 Log.d("RecipeGenerator", "Parsing JSON response");
                 JSONObject responseJson = new JSONObject(responseBody);
 
@@ -613,29 +583,23 @@ public class WebAppInterface {
                 JSONObject part = parts.getJSONObject(0);
                 String recipeContent = part.getString("text");
 
-                // 去除所有 Markdown 代碼塊標記
                 recipeContent = cleanMarkdownFormatting(recipeContent);
 
                 Log.d("RecipeGenerator", "Cleaned recipe content: " + recipeContent);
 
-                // 保存生成的食譜
                 generatedRecipe = recipeContent;
 
-                // 創建一個 final 變量來存儲 recipeContent，以便在 lambda 表達式中使用
                 final String finalRecipeContent = recipeContent;
 
-                // 通知 JavaScript 食譜已生成
                 Log.d("RecipeGenerator", "Updating UI with generated recipe");
                 ((Activity) context).runOnUiThread(() -> {
                     webView.loadUrl("file:///android_asset/recipe_result.html?saved=false");
 
-                    // 在頁面加載完成後，確保清除任何保存的食譜ID
                     webView.setWebViewClient(new WebViewClient() {
                         @Override
                         public void onPageFinished(WebView view, String url) {
                             super.onPageFinished(view, url);
 
-                            // 確保清除任何保存的食譜ID
                             webView.evaluateJavascript(
                                 "document.body.removeAttribute('data-saved-recipe-id');",
                                 null
@@ -660,7 +624,6 @@ public class WebAppInterface {
                 e.printStackTrace();
                 Log.e("RecipeGenerator", "Error generating recipe", e);
 
-                // 通知用戶生成失敗
                 ((Activity) context).runOnUiThread(() -> {
                     Toast.makeText(context, "Failed to generate recipe: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     webView.evaluateJavascript(
@@ -673,7 +636,6 @@ public class WebAppInterface {
         }).start();
     }
 
-    // 輔助方法：轉義 JavaScript 字符串
     private String escapeJsString(String str) {
         if (str == null) return "";
         return str.replace("\\", "\\\\")
@@ -695,7 +657,6 @@ public class WebAppInterface {
                     null
                 );
 
-                // 檢查是否已經有圖片URL（從已保存的食譜加載）
                 if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
                     Log.d("RecipeDebug", "Using existing image URL: " + currentImageUrl);
                     webView.evaluateJavascript(
@@ -703,9 +664,7 @@ public class WebAppInterface {
                         null
                     );
                 } else {
-                    // 只有在沒有現有圖片的情況下才生成新圖片
                     Log.d("RecipeDebug", "No existing image URL, generating new image");
-                    // 從食譜內容中提取標題
                     Pattern pattern = Pattern.compile("<h1[^>]*>(.*?)</h1>");
                     Matcher matcher = pattern.matcher(generatedRecipe);
                     if (matcher.find()) {
@@ -724,24 +683,20 @@ public class WebAppInterface {
         }
     }
 
-    // 從 HTML 內容中提取食譜標題
     private String extractRecipeTitle(String htmlContent) {
         try {
-            // 嘗試從 h1 標籤中提取標題
             Pattern pattern = Pattern.compile("<h1>(.*?)</h1>");
             Matcher matcher = pattern.matcher(htmlContent);
             if (matcher.find()) {
                 return matcher.group(1);
             }
 
-            // 如果沒有 h1 標籤，嘗試從 title 標籤中提取
             pattern = Pattern.compile("<title>(.*?)</title>");
             matcher = pattern.matcher(htmlContent);
             if (matcher.find()) {
                 return matcher.group(1);
             }
 
-            // 如果都沒有找到，返回默認標題
             return "Delicious Recipe";
         } catch (Exception e) {
             Log.e("RecipeGenerator", "Error extracting recipe title", e);
@@ -797,36 +752,27 @@ public class WebAppInterface {
     }
 
     /**
-     * 分享食譜
-     * @param title 食譜標題
-     * @param content 食譜內容
+     * @param title
+     * @param content
      */
     @JavascriptInterface
     public void shareRecipe(String title, String content) {
         Log.d("RecipeDebug", "shareRecipe called with title: " + title);
 
-        // Share as PDF if we have an image, otherwise use text sharing
         if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
-            // Use PdfHelper to generate and share PDF with recipe details
             PdfHelper.generateAndShareRecipePdf(context, title, content, currentImageUrl);
         } else {
-            // Fallback to original text sharing if no image is available
-            // Create share intent
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
 
-            // Set share content
             String shareText = title + "\n\n";
 
-            // Extract plain text from HTML content
             String plainText = Html.fromHtml(content, Html.FROM_HTML_MODE_COMPACT).toString();
             shareText += plainText;
 
-            // Add share information
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, title);
             shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
 
-            // Start share dialog
             ((Activity) context).startActivity(Intent.createChooser(shareIntent, "Share Recipe"));
         }
     }
@@ -880,7 +826,6 @@ public class WebAppInterface {
                             public void onSuccess(Boolean result) {
                                 ((Activity) context).runOnUiThread(() -> {
                                     Toast.makeText(context, "Item added to Pantry", Toast.LENGTH_SHORT).show();
-                                    // 刷新 Pantry 列表
                                     webView.evaluateJavascript("loadPantryItems();", null);
                                 });
                             }
@@ -913,18 +858,12 @@ public class WebAppInterface {
         }
     }
 
-    // 輔助方法：清理 Markdown 格式
     private String cleanMarkdownFormatting(String markdown) {
         if (markdown == null) return "";
 
-        // 移除所有代碼塊標記（包括語言標識符）
         String cleaned = markdown.replaceAll("```[a-zA-Z]*\\n", "")
                                 .replaceAll("```", "");
 
-        // 處理其他可能的 Markdown 格式（如果需要）
-        // 例如，可以保留標題、列表等格式，或者將它們轉換為 HTML
-
-        // 移除多餘的空行（如果需要）
         cleaned = cleaned.replaceAll("\\n{3,}", "\n\n");
 
         return cleaned;
@@ -934,15 +873,11 @@ public class WebAppInterface {
     public void generateRecipeImage(String recipeName) {
         Log.d("ImageGenerator", "Generating image for recipe: " + recipeName);
 
-        // 創建一個不會觸發內容政策的提示詞
-        // String prompt = "Create a simple square illustration of " + recipeName + ". The image should be colorful, appetizing, and visually appealing. Make it look like a hand-drawn food illustration. Please make the image square with dimensions 300x300 pixels.";
         String prompt = "Create a realistic, photographic image of a complete dish of " + recipeName + ". The image should be square with dimensions 100x100 pixels. Show the entire dish with natural lighting and realistic textures. No cartoon style, make it look like a professional food photograph.";
         try {
-            // 創建 Gemini API 請求
             JSONObject requestBody = new JSONObject();
-            requestBody.put("model", "gemini-2.0-flash-exp-image-generation");  // 使用實驗性圖像生成模型
+            requestBody.put("model", "gemini-2.0-flash-exp-image-generation");
 
-            // 創建 contents 數組
             JSONArray contentsArray = new JSONArray();
             JSONObject userContent = new JSONObject();
             userContent.put("role", "user");
@@ -957,14 +892,12 @@ public class WebAppInterface {
 
             requestBody.put("contents", contentsArray);
 
-            // 設置生成配置，包括響應模態
             JSONObject generationConfig = new JSONObject();
             generationConfig.put("temperature", 0.7);
             generationConfig.put("topP", 1.0);
             generationConfig.put("topK", 32);
             generationConfig.put("maxOutputTokens", 2048);
 
-            // 重要：添加 responseModalities 參數
             JSONArray responseModalities = new JSONArray();
             responseModalities.put("Text");
             responseModalities.put("Image");
@@ -972,18 +905,15 @@ public class WebAppInterface {
 
             requestBody.put("generationConfig", generationConfig);
 
-            // 輸出完整的請求體以進行調試
             String requestBodyString = requestBody.toString();
             Log.d("ImageGenerator", "Request body: " + requestBodyString);
 
-            // 創建 OkHttp 請求
             Request request = new Request.Builder()
                 .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=" + GEMINI_API_KEY)
                 .addHeader("Content-Type", "application/json")
                 .post(RequestBody.create(requestBodyString, MediaType.parse("application/json")))
                 .build();
 
-            // 發送請求
             new Thread(() -> {
                 try {
                     OkHttpClient client = new OkHttpClient.Builder()
@@ -1002,7 +932,6 @@ public class WebAppInterface {
                     if (response.isSuccessful()) {
                         JSONObject jsonResponse = new JSONObject(responseBody);
 
-                        // 檢查是否有候選項
                         if (!jsonResponse.has("candidates")) {
                             Log.e("ImageGenerator", "No 'candidates' field in response");
                             ((Activity) context).runOnUiThread(() -> {
@@ -1011,12 +940,10 @@ public class WebAppInterface {
                             return;
                         }
 
-                        // 解析響應
                         JSONArray candidates = jsonResponse.getJSONArray("candidates");
                         if (candidates.length() > 0) {
                             JSONObject candidate = candidates.getJSONObject(0);
 
-                            // 檢查是否有 content
                             if (!candidate.has("content")) {
                                 Log.e("ImageGenerator", "No 'content' field in candidate");
                                 ((Activity) context).runOnUiThread(() -> {
@@ -1027,7 +954,6 @@ public class WebAppInterface {
 
                             JSONObject content = candidate.getJSONObject("content");
 
-                            // 檢查是否有 parts
                             if (!content.has("parts")) {
                                 Log.e("ImageGenerator", "No 'parts' field in content");
                                 ((Activity) context).runOnUiThread(() -> {
@@ -1046,18 +972,15 @@ public class WebAppInterface {
 
                                 if (part.has("inlineData")) {
                                     JSONObject inlineData = part.getJSONObject("inlineData");
-                                    String imageData = inlineData.getString("data"); // Base64 encoded image
+                                    String imageData = inlineData.getString("data");
                                     String mimeType = inlineData.getString("mimeType");
 
                                     Log.d("ImageGenerator", "Found image data with MIME type: " + mimeType);
                                     Log.d("ImageGenerator", "Base64 data length: " + imageData.length());
 
-                                    // 創建完整的 data URL
                                     final String dataUrl = "data:" + mimeType + ";base64," + imageData;
 
-                                    // 通知 JavaScript 圖片已生成
                                     ((Activity) context).runOnUiThread(() -> {
-                                        // 使用 JavaScript 轉義處理 data URL
                                         String escapedUrl = dataUrl.replace("\\", "\\\\")
                                                                   .replace("'", "\\'")
                                                                   .replace("\n", "\\n")
@@ -1074,7 +997,6 @@ public class WebAppInterface {
                                     break;
                                 } else {
                                     Log.d("ImageGenerator", "Part " + i + " does not contain inlineData");
-                                    // 檢查是否有文本內容
                                     if (part.has("text")) {
                                         Log.d("ImageGenerator", "Part " + i + " contains text: " + part.getString("text"));
                                     }
@@ -1097,7 +1019,6 @@ public class WebAppInterface {
                         Log.e("ImageGenerator", "Image generation failed with code: " + response.code());
                         Log.e("ImageGenerator", "Response body: " + responseBody);
 
-                        // 嘗試解析錯誤消息
                         String errorMessage = "Unknown error";
                         try {
                             JSONObject errorJson = new JSONObject(responseBody);
@@ -1143,7 +1064,6 @@ public class WebAppInterface {
                             @Override
                             public void onSuccess(List<Recipe> recipes) {
                                 try {
-                                    // 將食譜列表轉換為 JSON
                                     JSONArray recipesArray = new JSONArray();
                                     for (Recipe recipe : recipes) {
                                         JSONObject recipeObj = new JSONObject();
@@ -1203,40 +1123,33 @@ public class WebAppInterface {
     public void loadRecipeDetails(int recipeId) {
         Log.d("RecipeDebug", "loadRecipeDetails called for recipe ID: " + recipeId);
 
-        // 清除之前的食譜內容和圖片URL
         generatedRecipe = "";
         currentImageUrl = "";
 
         supabaseHelper.getRecipeById(recipeId, new SupabaseHelper.SupabaseCallback<Recipe>() {
             @Override
             public void onSuccess(Recipe recipe) {
-                // 保存當前食譜內容和圖片URL
                 generatedRecipe = recipe.getContent();
                 currentImageUrl = recipe.getImageUrl();
 
                 ((Activity) context).runOnUiThread(() -> {
-                    // 導航到食譜結果頁面，添加saved=true參數
                     webView.loadUrl("file:///android_asset/recipe_result.html?saved=true");
 
-                    // 在頁面加載完成後，顯示食譜內容和圖片
                     webView.setWebViewClient(new WebViewClient() {
                         @Override
                         public void onPageFinished(WebView view, String url) {
                             super.onPageFinished(view, url);
 
-                            // 標記這是一個已保存的食譜
                             webView.evaluateJavascript(
                                 "markAsSavedRecipe(" + recipe.getId() + ")",
                                 null
                             );
 
-                            // 顯示食譜內容
                             webView.evaluateJavascript(
                                 "displayRecipe(" + JSONObject.quote(generatedRecipe) + ")",
                                 null
                             );
 
-                            // 如果有圖片，顯示圖片
                             if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
                                 webView.evaluateJavascript(
                                     "displayRecipeImage(" + JSONObject.quote(currentImageUrl) + ")",
@@ -1262,7 +1175,6 @@ public class WebAppInterface {
     public void deleteRecipe(int recipeId) {
         Log.d("RecipeDebug", "deleteRecipe called for recipe ID: " + recipeId);
 
-        // 檢查URL參數，確保只有已保存的食譜才能被刪除
         ((Activity) context).runOnUiThread(() -> {
             webView.evaluateJavascript(
                 "(function() { " +
@@ -1279,14 +1191,12 @@ public class WebAppInterface {
                         return;
                     }
 
-                    // 繼續刪除已保存的食譜
                     proceedWithRecipeDeletion(recipeId);
                 }
             );
         });
     }
 
-    // 將原來的刪除邏輯移到這個方法中
     private void proceedWithRecipeDeletion(int recipeId) {
         SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         String email = prefs.getString("email", "");
@@ -1302,7 +1212,6 @@ public class WebAppInterface {
                                 ((Activity) context).runOnUiThread(() -> {
                                     if (result) {
                                         Toast.makeText(context, "Recipe deleted successfully", Toast.LENGTH_SHORT).show();
-                                        // 返回主頁
                                         webView.loadUrl("file:///android_asset/home.html");
                                     } else {
                                         Toast.makeText(context, "Failed to delete recipe", Toast.LENGTH_SHORT).show();
@@ -1340,9 +1249,6 @@ public class WebAppInterface {
         }
     }
 
-    /**
-     * 更新用戶郵箱
-     */
     @JavascriptInterface
     public void updateUserEmail(String newEmail) {
         Log.d("ProfileDebug", "updateUserEmail called with: " + newEmail);
@@ -1360,12 +1266,10 @@ public class WebAppInterface {
                             public void onSuccess(Boolean result) {
                                 ((Activity) context).runOnUiThread(() -> {
                                     if (result) {
-                                        // 更新本地存儲的郵箱
                                         SharedPreferences.Editor editor = prefs.edit();
                                         editor.putString("email", newEmail);
                                         editor.apply();
 
-                                        // 通知前端更新成功
                                         webView.evaluateJavascript(
                                             "handleUpdateSuccess('Email updated successfully')",
                                             null
@@ -1421,9 +1325,6 @@ public class WebAppInterface {
         }
     }
 
-    /**
-     * 更新用戶密碼
-     */
     @JavascriptInterface
     public void updateUserPassword(String currentPassword, String newPassword) {
         Log.d("ProfileDebug", "updateUserPassword called");
@@ -1432,30 +1333,31 @@ public class WebAppInterface {
         String email = prefs.getString("email", "");
 
         if (!email.isEmpty()) {
-            // 首先驗證當前密碼
-            supabaseHelper.signIn(email, currentPassword, new SupabaseHelper.SupabaseCallback<Boolean>() {
+            String hashedCurrentPassword = hashPassword(currentPassword);
+
+            supabaseHelper.signIn(email, hashedCurrentPassword, new SupabaseHelper.SupabaseCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
                     if (result) {
-                        // 當前密碼正確，更新密碼
+                        String hashedNewPassword = hashPassword(newPassword);
+
                         supabaseHelper.getUserId(email, new SupabaseHelper.SupabaseCallback<Integer>() {
                             @Override
                             public void onSuccess(Integer userId) {
                                 if (userId != -1) {
-                                    supabaseHelper.updateUserPassword(userId, newPassword, new SupabaseHelper.SupabaseCallback<Boolean>() {
+                                    supabaseHelper.updateUserPassword(userId, hashedNewPassword, new SupabaseHelper.SupabaseCallback<Boolean>() {
                                         @Override
                                         public void onSuccess(Boolean updateResult) {
                                             ((Activity) context).runOnUiThread(() -> {
                                                 if (updateResult) {
-                                                    // 通知前端更新成功
                                                     webView.evaluateJavascript(
-                                                        "handleUpdateSuccess('Password updated successfully')",
-                                                        null
+                                                            "handleUpdateSuccess('Password updated successfully')",
+                                                            null
                                                     );
                                                 } else {
                                                     webView.evaluateJavascript(
-                                                        "handleUpdateError('Failed to update password')",
-                                                        null
+                                                            "handleUpdateError('Failed to update password')",
+                                                            null
                                                     );
                                                 }
                                             });
@@ -1466,8 +1368,8 @@ public class WebAppInterface {
                                             Log.e("ProfileDebug", "Error updating password: " + errorMessage);
                                             ((Activity) context).runOnUiThread(() -> {
                                                 webView.evaluateJavascript(
-                                                    "handleUpdateError('" + errorMessage + "')",
-                                                    null
+                                                        "handleUpdateError('" + errorMessage + "')",
+                                                        null
                                                 );
                                             });
                                         }
@@ -1475,8 +1377,8 @@ public class WebAppInterface {
                                 } else {
                                     ((Activity) context).runOnUiThread(() -> {
                                         webView.evaluateJavascript(
-                                            "handleUpdateError('User not found')",
-                                            null
+                                                "handleUpdateError('User not found')",
+                                                null
                                         );
                                     });
                                 }
@@ -1487,8 +1389,8 @@ public class WebAppInterface {
                                 Log.e("ProfileDebug", "Error getting user ID: " + errorMessage);
                                 ((Activity) context).runOnUiThread(() -> {
                                     webView.evaluateJavascript(
-                                        "handleUpdateError('" + errorMessage + "')",
-                                        null
+                                            "handleUpdateError('" + errorMessage + "')",
+                                            null
                                     );
                                 });
                             }
@@ -1496,8 +1398,8 @@ public class WebAppInterface {
                     } else {
                         ((Activity) context).runOnUiThread(() -> {
                             webView.evaluateJavascript(
-                                "handleUpdateError('Current password is incorrect')",
-                                null
+                                    "handleUpdateError('Current password is incorrect')",
+                                    null
                             );
                         });
                     }
@@ -1508,8 +1410,8 @@ public class WebAppInterface {
                     Log.e("ProfileDebug", "Error verifying current password: " + errorMessage);
                     ((Activity) context).runOnUiThread(() -> {
                         webView.evaluateJavascript(
-                            "handleUpdateError('" + errorMessage + "')",
-                            null
+                                "handleUpdateError('" + errorMessage + "')",
+                                null
                         );
                     });
                 }
@@ -1517,8 +1419,8 @@ public class WebAppInterface {
         } else {
             ((Activity) context).runOnUiThread(() -> {
                 webView.evaluateJavascript(
-                    "handleUpdateError('User not logged in')",
-                    null
+                        "handleUpdateError('User not logged in')",
+                        null
                 );
             });
         }

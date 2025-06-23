@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -15,9 +18,25 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        val secretsFile = rootProject.file("secrets.properties")
+        val secretsProperties = Properties()
+        if (secretsFile.exists()) {
+            secretsProperties.load(FileInputStream(secretsFile))
+            buildConfigField("String", "GEMINI_API_KEY", "\"${secretsProperties.getProperty("GEMINI_API_KEY")}\"")
+            buildConfigField("String", "SUPABASE_API_KEY", "\"${secretsProperties.getProperty("SUPABASE_API_KEY")}\"")
+        } else {
+            buildConfigField("String", "GEMINI_API_KEY", "\"\"") // Default empty value
+            buildConfigField("String", "SUPABASE_API_KEY", "\"\"") // Default empty value
+
+        }
+
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {

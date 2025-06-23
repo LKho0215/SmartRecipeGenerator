@@ -57,26 +57,22 @@
         var password = document.getElementById('password').value;
         var confirmPassword = document.getElementById('confirm-password').value;
 
-        // 檢查密碼長度
         if (password.length < 6) {
             alert("Password must be at least 6 characters long");
             return false;
         }
 
-        // 檢查密碼是否匹配
         if (password !== confirmPassword) {
             alert("Passwords do not match");
             return false;
         }
 
-        // 檢查郵箱格式
         var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             alert("Please enter a valid email address");
             return false;
         }
 
-        // 如果所有驗證都通過，調用註冊函數
         Android.signUp(email, password);
         return false; // 防止表單提交
     }
@@ -94,7 +90,6 @@
             return;
         }
 
-        // 檢查長度
         if (password.length < 6) {
             feedback = "Password must be at least 6 characters long";
             strengthBar.style.width = "20%";
@@ -102,19 +97,14 @@
         } else {
             strength += 1;
 
-            // 檢查是否包含數字
             if (/\d/.test(password)) strength += 1;
 
-            // 檢查是否包含小寫字母
             if (/[a-z]/.test(password)) strength += 1;
 
-            // 檢查是否包含大寫字母
             if (/[A-Z]/.test(password)) strength += 1;
 
-            // 檢查是否包含特殊字符
             if (/[^A-Za-z0-9]/.test(password)) strength += 1;
 
-            // 根據強度設置顏色和寬度
             switch(strength) {
                 case 1:
                     strengthBar.style.backgroundColor = "#ff4d4d";

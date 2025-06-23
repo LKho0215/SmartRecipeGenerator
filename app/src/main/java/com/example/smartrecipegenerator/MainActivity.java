@@ -18,9 +18,6 @@ public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
 
-    // 檢測物體的最小置信度門檻值
-    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.25f;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (webView.getUrl() != null && !webView.getUrl().endsWith("home.html")) {
-            // If we're not on the home page, navigate to home
             webView.loadUrl("file:///android_asset/home.html");
         } else if (webView.canGoBack()) {
             webView.goBack();

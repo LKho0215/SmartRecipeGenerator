@@ -6,8 +6,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Dark mode colors and gradient */
-    background: #121212; /* Fallback for browsers that don't support gradients */
+    background: #121212;
     background: linear-gradient(
         135deg,
         #121212 25%,
@@ -19,7 +18,6 @@ body {
         #1a1a1a
     );
     background-size: 40px 40px;
-    /* Animation */
     animation: move 4s linear infinite;
 }
 
@@ -232,7 +230,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* 頁面過渡動畫 */
 .page-transition {
     position: fixed;
     top: 0;
@@ -257,7 +254,6 @@ a:hover {
     to { opacity: 0; }
 }
 
-/* 加載指示器 */
 .loader {
     width: 35px;
     height: 80px;
@@ -291,7 +287,6 @@ a:hover {
    100% {background-size: 100% 5%}
   }
 
-/* 歡迎文字 */
 .welcome-text {
     text-align: center;
     color: white;

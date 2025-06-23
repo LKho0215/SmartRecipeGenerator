@@ -9,7 +9,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- 頂部導航欄 -->
         <header class="app-header">
             <div class="back-icon" onclick="goToHome()">
                 <i class="fas fa-arrow-left"></i>
@@ -20,27 +19,19 @@
             <div class="placeholder-icon"></div>
         </header>
 
-        <!-- 主要內容區域 -->
         <main class="main-content">
             <div class="recipe-result-container">
-                <!-- 已保存食譜標記 -->
-                <!-- 會通過 JavaScript 動態添加 -->
-
-                <!-- 食譜圖片容器 -->
                 <div id="recipe-image-container" class="recipe-image-container">
                     <img id="recipe-image" src="" alt="Recipe Image" class="recipe-image">
                 </div>
 
-                <!-- 食譜內容 -->
                 <div id="recipe-content" class="recipe-content">
-                    <!-- 食譜內容將通過 JavaScript 動態加載 -->
                     <div class="loading-recipe">
                         <div class="spinner"></div>
                         <p>Loading your delicious recipe...</p>
                     </div>
                 </div>
 
-                <!-- 操作按鈕 -->
                 <div class="recipe-actions">
                     <button onclick="saveRecipe()" class="action-btn save-btn">
                         <i class="fas fa-save"></i> Save Recipe
@@ -56,7 +47,6 @@
         </main>
     </div>
 
-    <!-- 刪除確認對話框 -->
     <div id="delete-confirm-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-title">
